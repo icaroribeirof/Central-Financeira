@@ -1,5 +1,5 @@
 CREATE DATABASE IF NOT EXISTS central_financeira;
-USE controle_financeiro;
+USE central_financeira;
 
 -- Tabela de Categorias
 CREATE TABLE IF NOT EXISTS categorias (

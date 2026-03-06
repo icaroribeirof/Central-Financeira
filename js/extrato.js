@@ -132,27 +132,57 @@ document.addEventListener('DOMContentLoaded', () => {
                 return 0;
             });
 
-            listaDiv.innerHTML = transacoes.map(t => `
-                <div class="item-movimentacao ${t.tipo}">
-                    <div class="info-principal">
-                        <h4>${t.descricao}</h4>
-                        <span>${t.data.split('-').reverse().join('/')} | ${t.categoria} | ${t.metodo}</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <span class="valor-mov ${t.tipo}">
-                            ${t.tipo === 'despesa' ? '-' : '+'} R$ ${parseFloat(t.valor).toLocaleString('pt-BR', {minimumFractionDigits: 2})}
-                        </span>
-                        <button class="btn-edit" onclick="prepararEdicao(${t.id}, '${t.descricao.replace(/'/g, "\\'")}', ${t.valor}, '${t.data}', '${t.tipo}', '${t.categoria}', '${t.metodo}')">✏️</button>
-                        <button class="btn-delete" onclick="removerTransacao(${t.id})">🗑️</button>
-                    </div>
-                </div>
-            `).join('');
+            // CORREÇÃO: construção segura via DOM para evitar XSS
+            listaDiv.innerHTML = '';
+            transacoes.forEach(t => {
+                const item = document.createElement('div');
+                item.className = `item-movimentacao ${t.tipo}`;
+
+                const info = document.createElement('div');
+                info.className = 'info-principal';
+
+                const h4 = document.createElement('h4');
+                h4.textContent = t.descricao; // textContent escapa HTML automaticamente
+
+                const span = document.createElement('span');
+                span.textContent = `${t.data.split('-').reverse().join('/')} | ${t.categoria} | ${t.metodo}`;
+
+                info.appendChild(h4);
+                info.appendChild(span);
+
+                const acoes = document.createElement('div');
+                acoes.style.cssText = 'display: flex; align-items: center; gap: 15px;';
+
+                const valorSpan = document.createElement('span');
+                valorSpan.className = `valor-mov ${t.tipo}`;
+                valorSpan.textContent = `${t.tipo === 'despesa' ? '-' : '+'} R$ ${parseFloat(t.valor).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+
+                const btnEdit = document.createElement('button');
+                btnEdit.className = 'btn-edit';
+                btnEdit.textContent = '✏️';
+                btnEdit.addEventListener('click', () =>
+                    prepararEdicao(t.id, t.descricao, t.valor, t.data, t.tipo, t.categoria, t.metodo)
+                );
+
+                const btnDel = document.createElement('button');
+                btnDel.className = 'btn-delete';
+                btnDel.textContent = '🗑️';
+                btnDel.addEventListener('click', () => removerTransacao(t.id));
+
+                acoes.appendChild(valorSpan);
+                acoes.appendChild(btnEdit);
+                acoes.appendChild(btnDel);
+
+                item.appendChild(info);
+                item.appendChild(acoes);
+                listaDiv.appendChild(item);
+            });
         } catch (error) {
             console.error("Erro ao carregar histórico:", error);
         }
     }
 
-    window.prepararEdicao = async (id, desc, valor, data, tipo, cat, met) => {
+    const prepararEdicao = async (id, desc, valor, data, tipo, cat, met) => {
         idEdicao = id;
         await popularSelects();
         descInput.value = desc;
@@ -165,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalCadastro.style.display = 'flex';
     };
 
-    window.removerTransacao = async (id) => {
+    const removerTransacao = async (id) => {
         if (confirm("Excluir esta transação?")) {
             const res = await fetch('api/api_extrato.php', {
                 method: 'DELETE',
