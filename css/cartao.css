@@ -252,3 +252,9 @@ input, select {
     width: 90%;
     max-width: 450px;
 }
+/* Informação do ciclo de fatura */
+.ciclo-info {
+    margin: -8px 0 10px 0;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+}

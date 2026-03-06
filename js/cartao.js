@@ -6,9 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const filtroData = document.getElementById('filtro-data');
     const buscaInput = document.getElementById('busca-cartao');
     
-    // Setar data atual no filtro (YYYY-MM)
+    // Setar próximo mês no filtro (YYYY-MM)
     const hoje = new Date();
-    filtroData.value = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
+    const proximo = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 1);
+    filtroData.value = `${proximo.getFullYear()}-${String(proximo.getMonth() + 1).padStart(2, '0')}`;
 
     let idEdicao = null;
 
@@ -27,9 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
     form.onsubmit = async (e) => {
         e.preventDefault();
         const dados = {
-            id: idEdicao,
-            nome: document.getElementById('nome-cartao').value,
-            limite: parseFloat(document.getElementById('limite-total').value)
+            id:             idEdicao,
+            nome:           document.getElementById('nome-cartao').value,
+            limite:         parseFloat(document.getElementById('limite-total').value),
+            dia_fechamento: parseInt(document.getElementById('dia-fechamento').value)
         };
 
         try {
@@ -53,40 +55,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- RENDERIZAR CARTÕES ---
     async function renderizar() {
-        const dataFiltro = filtroData.value; 
+        const dataFiltro = filtroData.value;
         const termoBusca = buscaInput ? buscaInput.value.toLowerCase() : "";
 
         try {
-            const res = await fetch(`api/api_cartao.php?acao=buscar&mes=${dataFiltro}`);
-            const data = await res.json();
+            const res    = await fetch(`api/api_cartao.php?acao=buscar&mes=${dataFiltro}`);
+            const data   = await res.json();
             const cartoes = data.cartoes || [];
+
+            const nomeMeses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+            const [anoF, mesF] = dataFiltro.split('-');
+            const labelFatura  = `${nomeMeses[parseInt(mesF) - 1]}/${anoF}`;
+
+            const formatarData = (str) => {
+                const [a, m, d] = str.split('-');
+                return `${d}/${nomeMeses[parseInt(m)-1]}/${a}`;
+            };
 
             const cartoesFiltrados = cartoes.filter(c => c.nome.toLowerCase().includes(termoBusca));
 
-            /*if (cartoesFiltrados.length === 0) {
-                listaDiv.innerHTML = `<p style="text-align:center; color: #888; margin-top: 20px;">Nenhum cartão encontrado.</p>`;
-                return;
-            }*/
-
             listaDiv.innerHTML = cartoesFiltrados.map((c) => {
-                const gastos = parseFloat(c.total_gasto || 0);
-                const limite = parseFloat(c.limite);
+                const gastos     = parseFloat(c.total_gasto || 0);
+                const limite     = parseFloat(c.limite);
                 const percentual = limite > 0 ? Math.min((gastos / limite) * 100, 100) : 0;
                 const disponivel = limite - gastos;
+                const corBarra   = percentual >= 90 ? '#e74c3c' : percentual >= 70 ? '#f39c12' : '#3498db';
 
                 return `
                     <div class="card-item">
                         <div class="card-header">
                             <h3>${c.nome}</h3>
-                            <span class="fatura-label">Fatura: ${dataFiltro.split('-').reverse().join('/')}</span>
+                            <span class="fatura-label">Fatura: ${labelFatura}</span>
                         </div>
+                        <p class="ciclo-info">📅 Compras de <strong>${formatarData(c.periodo_ini)}</strong> até <strong>${formatarData(c.periodo_fim)}</strong> · Fecha dia <strong>${c.dia_fechamento}</strong></p>
                         <div class="limite-info">
                             <div class="limite-texto">
                                 <span>Fatura Atual: <strong>R$ ${gastos.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></span>
                                 <span>${percentual.toFixed(0)}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${percentual}%"></div>
+                                <div class="progress-fill" style="width: ${percentual}%; background: ${corBarra};"></div>
                             </div>
                             <div class="limite-texto" style="margin-top: 10px; font-size: 0.75rem; color: var(--text-secondary);">
                                 <span>Disponível: R$ ${disponivel.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
@@ -94,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         </div>
                         <div class="card-footer">
-                            <button class="btn-edit" onclick="prepararEdicao(${c.id}, '${c.nome.replace(/'/g, "\\'")}', ${c.limite})">Editar</button>
+                            <button class="btn-edit" onclick="prepararEdicao(${c.id}, '${c.nome.replace(/'/g, "\\'")}', ${c.limite}, ${c.dia_fechamento})">Editar</button>
                             <button class="btn-delete" onclick="removerCartao(${c.id})">Excluir</button>
                         </div>
                     </div>`;
@@ -104,10 +112,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    window.prepararEdicao = (id, nome, limite) => {
+    window.prepararEdicao = (id, nome, limite, diaFechamento) => {
         idEdicao = id;
-        document.getElementById('nome-cartao').value = nome;
-        document.getElementById('limite-total').value = limite;
+        document.getElementById('nome-cartao').value    = nome;
+        document.getElementById('limite-total').value   = limite;
+        document.getElementById('dia-fechamento').value = diaFechamento;
         document.getElementById('modal-titulo').innerText = "Editar Cartão";
         modal.style.display = 'flex';
     };

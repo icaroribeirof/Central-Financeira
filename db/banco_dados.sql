@@ -43,6 +43,9 @@ ALTER TABLE categorias ADD COLUMN usuario_id INT;
 ALTER TABLE cartoes ADD COLUMN usuario_id INT;
 ALTER TABLE transacoes ADD COLUMN usuario_id INT;
 
+-- Dia do fechamento da fatura de cada cartão (1-31, padrão 1)
+ALTER TABLE cartoes ADD COLUMN dia_fechamento TINYINT NOT NULL DEFAULT 1;
+
 -- Suporte a recorrência e parcelamento
 -- tipo_lancamento: 'unico' | 'recorrente' | 'parcelado'
 -- grupo_id: liga todas as parcelas/recorrências de um mesmo lançamento

@@ -56,6 +56,11 @@ $usuario_nome = $_SESSION['usuario_nome'];
                     <label>Limite Total (R$)</label>
                     <input type="number" id="limite-total" step="0.01" placeholder="0.00" required>
                 </div>
+                <div class="col-input" style="margin-bottom: 15px;">
+                    <label>Dia de Fechamento</label>
+                    <input type="number" id="dia-fechamento" min="1" max="31" placeholder="Ex: 10" required>
+                    <span style="font-size:0.75rem; color:var(--text-secondary); margin-top:4px;">Compras até este dia entram na fatura do mês seguinte.</span>
+                </div>
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
                     <button type="submit" class="btn-novo" style="flex: 2;">Salvar</button>
                     <button type="button" onclick="fecharModal()" style="flex: 1; background: #95a5a6; color: white; border: none; border-radius: 8px; cursor: pointer;">Cancelar</button>
