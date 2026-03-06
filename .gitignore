@@ -1,0 +1,9 @@
+# Credenciais — nunca versionar
+.env
+
+# Dependências e cache
+vendor/
+node_modules/
+
+# Logs
+*.log
