@@ -1,0 +1,178 @@
+/* login.css */
+
+/* 1. Variáveis de Cor - Sincronizadas com o dashboard */
+:root {
+    --bg-main: #0f172a;
+    --bg-card: #1e293b;
+    --text-main: #f8fafc;
+    --text-secondary: #94a3b8;
+    --border-color: #334155;
+    --accent-color: #6366f1;
+}
+
+[data-theme="light"] {
+    --bg-main: #f1f5f9;
+    --bg-card: #ffffff;
+    --text-main: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    --accent-color: #4f46e5;
+}
+
+/* 2. Reset e Fundo da Tela Toda */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-main) !important;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    transition: background-color 0.3s ease;
+}
+
+.login-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 3. Botão de Alternância (Posição Fixa no Canto) */
+.theme-switcher-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: var(--bg-card);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    z-index: 1000;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.theme-switcher-btn:hover {
+    transform: scale(1.05);
+}
+
+/* 4. O Container do Card (Recuperando o visual da imagem 2) */
+.login-container {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+}
+
+.login-box {
+    background-color: var(--bg-card);
+    padding: 40px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+/* 5. Logo e Títulos */
+.login-logo {
+    width: 60px; /* Tamanho controlado para não ficar gigante */
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.login-header h1 {
+    color: var(--text-main);
+    font-size: 1.6rem;
+    margin-bottom: 25px;
+}
+
+/* 6. Sistema de Abas (Estilo Pílula) */
+.tab-system {
+    display: flex;
+    background-color: var(--bg-main);
+    padding: 5px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    gap: 5px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.tab-btn.active {
+    background-color: var(--accent-color);
+    color: #ffffff;
+}
+
+/* 7. Formulários e Inputs */
+.auth-form {
+    text-align: left;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper i {
+    position: absolute;
+    left: 15px;
+    color: var(--accent-color);
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 12px 15px 12px 45px;
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    color: var(--text-main);
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.input-wrapper input:focus {
+    border-color: var(--accent-color);
+}
+
+/* 8. Botão de Ação */
+.btn-login {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--accent-color);
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: filter 0.2s;
+    margin-top: 10px;
+}
+
+.btn-login:hover {
+    filter: brightness(1.1);
+}
