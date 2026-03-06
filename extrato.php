@@ -44,8 +44,8 @@ $usuario_nome = $_SESSION['usuario_nome'];
             <div class="col-input">
                 <label>Ordenar por:</label>
                 <select id="ordem-select">
-                    <option value="data-desc">Data (Mais recente)</option>
                     <option value="data-asc">Data (Mais antigo)</option>
+                    <option value="data-desc">Data (Mais recente)</option>
                     <option value="valor-desc">Maior Valor</option>
                     <option value="valor-asc">Menor Valor</option>
                 </select>
