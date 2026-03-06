@@ -90,9 +90,10 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (e) { console.error('Erro ao buscar cartões', e); }
 
             metSelect.innerHTML = `
+                <option value="Boleto">Boleto</option>    
+                <option value="Débito">Débito</option>    
                 <option value="Dinheiro">Dinheiro</option>
                 <option value="Pix">Pix</option>
-                <option value="Débito">Débito</option>
             `;
             cartoes.forEach(c => {
                 const opt = document.createElement('option');
