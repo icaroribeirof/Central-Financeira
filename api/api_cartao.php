@@ -23,29 +23,22 @@ try {
         foreach ($cartoes as &$cartao) {
             $dia_fech = (int)$cartao['dia_fechamento'];
 
-            // Regra: compras ATÉ o dia de fechamento entram na fatura do mês seguinte (M+1).
-            //        compras APÓS o dia de fechamento entram na fatura de dois meses à frente (M+2).
-            //
-            // Invertendo para a busca: dado que queremos a fatura de $mes_fatura,
-            //   as compras que a compõem vieram de dois intervalos distintos:
-            //     - Dias (dia_fech+1) até fim do mês  de (mes_fatura - 2)
-            //     - Dias 1 até dia_fech               de (mes_fatura - 1)
+            // Regra: a fatura do mês M fecha no dia X do próprio mês M.
+            // O período de compras vai do dia X+1 do mês M-1 até o dia X do mês M.
+            // Ex: fatura Abril, fecha dia 5 → período 06/Mar até 05/Abr.
 
-            $mes_m2  = date('Y-m', mktime(0,0,0, (int)$mes_fat - 2, 1, (int)$ano_fat));
-            $mes_m1  = date('Y-m', mktime(0,0,0, (int)$mes_fat - 1, 1, (int)$ano_fat));
+            $mes_anterior = date('Y-m', mktime(0, 0, 0, (int)$mes_fat - 1, 1, (int)$ano_fat));
 
-            // Último dia do mês M-2
-            $ultimo_dia_m2 = (int)date('t', strtotime($mes_m2 . '-01'));
-            // Garante que dia_fechamento não ultrapasse o último dia do mês
-            $dia_fech_m1 = min($dia_fech, (int)date('t', strtotime($mes_m1 . '-01')));
+            // Último dia do mês anterior (para não ultrapassar)
+            $ultimo_dia_mes_ant = (int)date('t', strtotime($mes_anterior . '-01'));
+            $dia_inicio = min($dia_fech + 1, $ultimo_dia_mes_ant);
 
-            $data_ini = $mes_m2 . '-' . str_pad($dia_fech + 1, 2, '0', STR_PAD_LEFT);
-            $data_fim = $mes_m1 . '-' . str_pad($dia_fech_m1, 2, '0', STR_PAD_LEFT);
+            // Último dia do mês da fatura (para não ultrapassar o dia_fech)
+            $ultimo_dia_mes_fat = (int)date('t', strtotime($mes_fatura . '-01'));
+            $dia_fim = min($dia_fech, $ultimo_dia_mes_fat);
 
-            // Se dia_fech = último dia do mês, início é o dia 1 do mês M-1
-            if ($dia_fech >= $ultimo_dia_m2) {
-                $data_ini = $mes_m1 . '-01';
-            }
+            $data_ini = $mes_anterior . '-' . str_pad($dia_inicio, 2, '0', STR_PAD_LEFT);
+            $data_fim = $mes_fatura   . '-' . str_pad($dia_fim,    2, '0', STR_PAD_LEFT);
 
             $q = $pdo->prepare(
                 "SELECT SUM(valor) as total
