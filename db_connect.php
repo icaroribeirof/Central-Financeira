@@ -4,7 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 $host = 'localhost';
-$db   = 'controle_financeiro'; // Nome do banco conforme seu SQL
+$db   = 'central_financeira'; // Nome do banco conforme seu SQL
 $user = 'root';
 $pass = '';
 
