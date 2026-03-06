@@ -89,6 +89,40 @@ $usuario_nome = $_SESSION['usuario_nome'];
                         <select id="metodo-pagamento" required>
                             </select>
                     </div>
+
+                    <!-- NOVO: Tipo de lançamento -->
+                    <div class="col-input col-full">
+                        <label>Tipo de Lançamento</label>
+                        <div class="tipo-lancamento-grupo">
+                            <label class="radio-card" id="radio-unico">
+                                <input type="radio" name="tipo_lancamento" value="unico" checked>
+                                <span class="radio-icon">1×</span>
+                                <span class="radio-label">Único</span>
+                            </label>
+                            <label class="radio-card" id="radio-recorrente">
+                                <input type="radio" name="tipo_lancamento" value="recorrente">
+                                <span class="radio-icon">🔁</span>
+                                <span class="radio-label">Recorrente</span>
+                            </label>
+                            <label class="radio-card" id="radio-parcelado">
+                                <input type="radio" name="tipo_lancamento" value="parcelado">
+                                <span class="radio-icon">📅</span>
+                                <span class="radio-label">Parcelado</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- NOVO: Campo de parcelas (visível só quando parcelado) -->
+                    <div class="col-input col-full" id="campo-parcelas" style="display:none;">
+                        <label>Número de Parcelas</label>
+                        <input type="number" id="total-parcelas" min="2" max="360" value="2" placeholder="Ex: 12">
+                        <span class="hint-parcelas" id="hint-parcelas"></span>
+                    </div>
+
+                    <!-- INFO: aviso recorrente -->
+                    <div class="col-input col-full" id="aviso-recorrente" style="display:none;">
+                        <p class="info-box">🔁 Serão gerados lançamentos mensais automáticos para os próximos <strong>24 meses</strong> a partir da data selecionada.</p>
+                    </div>
                 </div>
                 <br>
                 <div class="modal-footer">
@@ -110,6 +144,33 @@ $usuario_nome = $_SESSION['usuario_nome'];
                 <button onclick="executarLimpeza('despesa')" style="background-color: #f39c12; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">📉 Somente Despesas</button>
                 <button onclick="executarLimpeza('receita')" style="background-color: #2ecc71; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">📈 Somente Receitas</button>
                 <button onclick="fecharModal()" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; margin-top: 10px;">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: escolha de escopo ao EDITAR parcelado/recorrente -->
+    <div id="modal-editar-grupo" class="modal">
+        <div class="modal-content" style="max-width: 420px; text-align: center;">
+            <h3 id="editar-grupo-titulo">Salvar Alteração</h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px;" id="editar-grupo-subtitulo"></p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button id="btn-salvar-unico"   style="background-color:#3498db;color:white;padding:12px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;">Alterar só este lançamento</button>
+                <button id="btn-salvar-futuros" style="background-color:#f39c12;color:white;padding:12px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;">Alterar este e os seguintes</button>
+                <button onclick="fecharModalEdicao()" style="background:none;border:none;color:var(--text-secondary);cursor:pointer;margin-top:8px;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: escolha de escopo ao excluir parcelado/recorrente -->
+    <div id="modal-excluir-grupo" class="modal">
+        <div class="modal-content" style="max-width: 420px; text-align: center;">
+            <h3 id="excluir-titulo">Excluir Lançamento</h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px;" id="excluir-subtitulo"></p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button id="btn-excluir-unico"  style="background-color:#e74c3c;color:white;padding:12px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;">Excluir só este lançamento</button>
+                <button id="btn-excluir-futuros" style="background-color:#f39c12;color:white;padding:12px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;">Excluir este e os seguintes</button>
+                <button id="btn-excluir-grupo"  style="background-color:#8e44ad;color:white;padding:12px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;">Excluir todos do grupo</button>
+                <button onclick="fecharModal()" style="background:none;border:none;color:var(--text-secondary);cursor:pointer;margin-top:8px;">Cancelar</button>
             </div>
         </div>
     </div>

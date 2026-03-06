@@ -42,3 +42,13 @@ CREATE TABLE IF NOT EXISTS usuarios (
 ALTER TABLE categorias ADD COLUMN usuario_id INT;
 ALTER TABLE cartoes ADD COLUMN usuario_id INT;
 ALTER TABLE transacoes ADD COLUMN usuario_id INT;
+
+-- Suporte a recorrência e parcelamento
+-- tipo_lancamento: 'unico' | 'recorrente' | 'parcelado'
+-- grupo_id: liga todas as parcelas/recorrências de um mesmo lançamento
+-- parcela_atual: número da parcela (1, 2, 3...) — NULL se único
+-- total_parcelas: total de parcelas — NULL se único ou recorrente
+ALTER TABLE transacoes ADD COLUMN tipo_lancamento ENUM('unico','recorrente','parcelado') NOT NULL DEFAULT 'unico';
+ALTER TABLE transacoes ADD COLUMN grupo_id CHAR(36) NULL;
+ALTER TABLE transacoes ADD COLUMN parcela_atual INT NULL;
+ALTER TABLE transacoes ADD COLUMN total_parcelas INT NULL;
