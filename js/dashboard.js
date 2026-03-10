@@ -13,14 +13,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 1. Atualizar Cards de Resumo
             document.getElementById('total-receitas').innerText = `R$ ${dados.resumo.receitas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-            document.getElementById('total-despesas').innerText = `R$ ${dados.resumo.despesas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('total-despesas').innerText = `R$ ${dados.resumo.despesas_nao_cartao.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('total-cartao').innerText = `R$ ${dados.resumo.despesas_cartao.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
             document.getElementById('total-saldo').innerText = `R$ ${dados.resumo.saldo.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
 
             // 2. Renderizar Gráfico de Pizza (Categorias)
             renderizarPizza(dados.categorias);
 
-            // 3. Renderizar Gráfico de Evolução (Últimos 6 meses)
-            renderizarEvolucao(dados.evolucao);
+            // 3. Renderizar Gráfico de Evolução Não Cartão (Últimos 6 meses)
+            renderizarEvolucaoNaoCartao(dados.evolucao_nao_cartao);
+
+            // 4. Renderizar Gráfico de Evolução Cartão (Últimos 6 meses)
+            renderizarEvolucaoCartao(dados.evolucao_cartao);
 
         } catch (error) {
             console.error("Erro ao carregar dados do dashboard:", error);
@@ -48,18 +52,43 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function renderizarEvolucao(dadosEvo) {
-        const ctx = document.getElementById('chartEvolucao').getContext('2d');
-        if (window.chartBar) window.chartBar.destroy();
+    function renderizarEvolucaoNaoCartao(dadosEvo) {
+        const ctx = document.getElementById('chartEvolucaoNaoCartao').getContext('2d');
+        if (window.chartBarNaoCartao) window.chartBarNaoCartao.destroy();
 
-        window.chartBar = new Chart(ctx, {
+        window.chartBarNaoCartao = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: dadosEvo.labels,
                 datasets: [{
-                    label: 'Gastos Mensais (R$)',
+                    label: 'Despesas Não Cartão (R$)',
                     data: dadosEvo.valores,
                     backgroundColor: '#e74c3c',
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true, grid: { display: false } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    }
+
+    function renderizarEvolucaoCartao(dadosEvo) {
+        const ctx = document.getElementById('chartEvolucaoCartao').getContext('2d');
+        if (window.chartBarCartao) window.chartBarCartao.destroy();
+
+        window.chartBarCartao = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: dadosEvo.labels,
+                datasets: [{
+                    label: 'Despesas Cartão (R$)',
+                    data: dadosEvo.valores,
+                    backgroundColor: '#9b59b6',
                     borderRadius: 5
                 }]
             },

@@ -79,12 +79,12 @@ if ($method === 'POST') {
                 if ($escopo === 'futuros' && $t['grupo_id']) {
                     $stmt = $pdo->prepare(
                         "UPDATE transacoes
-                         SET descricao = ?, valor = ?, tipo = ?, categoria = ?, metodo = ?
+                         SET descricao = ?, valor = ?, tipo = ?, categoria = ?, metodo = ?, eh_assinatura = ?, eh_cartao = ?
                          WHERE grupo_id = ? AND usuario_id = ? AND parcela_atual >= ?"
                     );
                     $stmt->execute([
                         $d['descricao'], $d['valor'], $d['tipo'],
-                        $d['categoria'], $d['metodo'],
+                        $d['categoria'], $d['metodo'], $d['eh_assinatura'] ?? 0, $d['eh_cartao'] ?? 0,
                         $t['grupo_id'], $usuario_id, $t['parcela_atual']
                     ]);
                 } else {
@@ -92,12 +92,12 @@ if ($method === 'POST') {
                     $stmt = $pdo->prepare(
                         "UPDATE transacoes
                          SET descricao = ?, valor = ?, data = ?, tipo = ?,
-                             categoria = ?, metodo = ?
+                             categoria = ?, metodo = ?, eh_assinatura = ?, eh_cartao = ?
                          WHERE id = ? AND usuario_id = ?"
                     );
                     $stmt->execute([
                         $d['descricao'], $d['valor'], $data_base,
-                        $d['tipo'], $d['categoria'], $d['metodo'],
+                        $d['tipo'], $d['categoria'], $d['metodo'], $d['eh_assinatura'] ?? 0, $d['eh_cartao'] ?? 0,
                         $d['id'], $usuario_id
                     ]);
                 }
@@ -122,15 +122,15 @@ if ($method === 'POST') {
 
                 $sql = "INSERT INTO transacoes
                             (descricao, valor, data, tipo, categoria, metodo, usuario_id,
-                             tipo_lancamento, grupo_id, parcela_atual, total_parcelas)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                             tipo_lancamento, grupo_id, parcela_atual, total_parcelas, eh_assinatura, eh_cartao)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 $ins = $pdo->prepare($sql);
 
                 if ($novo_tipo_lanc === 'unico') {
                     $ins->execute([
                         $d['descricao'], $d['valor'], $data_base,
                         $d['tipo'], $d['categoria'], $d['metodo'], $usuario_id,
-                        'unico', null, null, null
+                        'unico', null, null, null, $d['eh_assinatura'] ?? 0, $d['eh_cartao'] ?? 0
                     ]);
 
                 } elseif ($novo_tipo_lanc === 'parcelado') {
@@ -140,7 +140,7 @@ if ($method === 'POST') {
                         $ins->execute([
                             $d['descricao'], $valor_parcela, $data_p,
                             $d['tipo'], $d['categoria'], $d['metodo'], $usuario_id,
-                            'parcelado', $grupo_id, ($i + 1), $total_parcelas
+                            'parcelado', $grupo_id, ($i + 1), $total_parcelas, $d['eh_assinatura'] ?? 0, $d['eh_cartao'] ?? 0
                         ]);
                     }
 
@@ -151,7 +151,7 @@ if ($method === 'POST') {
                         $ins->execute([
                             $d['descricao'], $d['valor'], $data_r,
                             $d['tipo'], $d['categoria'], $d['metodo'], $usuario_id,
-                            'recorrente', $grupo_id, ($i + 1), $MESES
+                            'recorrente', $grupo_id, ($i + 1), $MESES, $d['eh_assinatura'] ?? 0, $d['eh_cartao'] ?? 0
                         ]);
                     }
                 }
@@ -178,8 +178,8 @@ if ($method === 'POST') {
 
         $sql = "INSERT INTO transacoes
                     (descricao, valor, data, tipo, categoria, metodo, usuario_id,
-                     tipo_lancamento, grupo_id, parcela_atual, total_parcelas)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                     tipo_lancamento, grupo_id, parcela_atual, total_parcelas, eh_assinatura, eh_cartao)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $pdo->prepare($sql);
 
         if ($tipo_lancamento === 'unico') {
@@ -187,7 +187,7 @@ if ($method === 'POST') {
             $stmt->execute([
                 $d['descricao'], $d['valor'], $data_base,
                 $d['tipo'], $d['categoria'], $d['metodo'], $usuario_id,
-                'unico', null, null, null
+                'unico', null, null, null, $d['eh_assinatura'] ?? 0, $d['eh_cartao'] ?? 0
             ]);
 
         } elseif ($tipo_lancamento === 'parcelado') {
@@ -199,7 +199,7 @@ if ($method === 'POST') {
                 $stmt->execute([
                     $d['descricao'], $valor_parcela, $data_parcela,
                     $d['tipo'], $d['categoria'], $d['metodo'], $usuario_id,
-                    'parcelado', $grupo_id, ($i + 1), $total_parcelas
+                    'parcelado', $grupo_id, ($i + 1), $total_parcelas, $d['eh_assinatura'] ?? 0, $d['eh_cartao'] ?? 0
                 ]);
             }
 
@@ -211,7 +211,7 @@ if ($method === 'POST') {
                 $stmt->execute([
                     $d['descricao'], $d['valor'], $data_rec,
                     $d['tipo'], $d['categoria'], $d['metodo'], $usuario_id,
-                    'recorrente', $grupo_id, ($i + 1), $MESES_RECORRENCIA
+                    'recorrente', $grupo_id, ($i + 1), $MESES_RECORRENCIA, $d['eh_assinatura'] ?? 0, $d['eh_cartao'] ?? 0
                 ]);
             }
         }

@@ -12,18 +12,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const buscaInput     = document.getElementById('input-busca');
     const ordemSelect    = document.getElementById('ordem-select');
     const listaDiv       = document.getElementById('lista-transacoes');
+    const filtroCategoria = document.getElementById('filtro-categoria');
+    const filtroMetodo   = document.getElementById('filtro-metodo');
+    const filtroAssinatura = document.getElementById('filtro-assinatura');
+    const filtroCartao   = document.getElementById('filtro-cartao');
+    const resumoFiltros  = document.getElementById('resumo-filtros');
 
     const modalCadastro  = document.getElementById('modal-cadastro');
     const modalLimpeza   = document.getElementById('modal-limpeza');
     const modalGrupo     = document.getElementById('modal-excluir-grupo');
     const btnAbrirCadastro = document.getElementById('btn-abrir-cadastro');
     const btnAbrirLimpeza  = document.getElementById('btn-abrir-limpeza');
+    const btnResetarFiltros = document.getElementById('btn-resetar-filtros');
 
     // Novos elementos de tipo de lançamento
     const campoParcelas   = document.getElementById('campo-parcelas');
     const totalParcelasIn = document.getElementById('total-parcelas');
     const hintParcelas    = document.getElementById('hint-parcelas');
     const avisoRecorrente = document.getElementById('aviso-recorrente');
+    const ehAssinaturaInput = document.getElementById('eh-assinatura');
+    const ehCartaoInput = document.getElementById('eh-cartao');
 
     // Setar mês atual no filtro
     const hoje = new Date();
@@ -73,12 +81,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const resCat = await fetch('api/api_categorias.php');
             const categorias = await resCat.json();
             catSelect.innerHTML = '<option value="">Selecione uma categoria</option>';
+            
+            // Popular filtro de categorias também
+            filtroCategoria.innerHTML = '<option value="">Todas as Categorias</option>';
+            
             if (Array.isArray(categorias)) {
                 categorias.forEach(c => {
                     const opt = document.createElement('option');
                     opt.value       = c.nome;
                     opt.textContent = c.nome;
                     catSelect.appendChild(opt);
+                    
+                    // Adicionar também ao filtro
+                    const optFiltro = document.createElement('option');
+                    optFiltro.value       = c.nome;
+                    optFiltro.textContent = c.nome;
+                    filtroCategoria.appendChild(optFiltro);
                 });
             }
 
@@ -95,11 +113,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 <option value="Dinheiro">Dinheiro</option>
                 <option value="Pix">Pix</option>
             `;
+            
+            // Popular filtro de métodos também
+            filtroMetodo.innerHTML = '<option value="">Todas as Formas</option>';
+            
+            // Adicionar métodos padrão ao filtro
+            const metodosPadrao = [
+                { valor: 'Boleto', label: 'Boleto' },
+                { valor: 'Débito', label: 'Débito' },
+                { valor: 'Dinheiro', label: 'Dinheiro' },
+                { valor: 'Pix', label: 'Pix' }
+            ];
+            
+            metodosPadrao.forEach(m => {
+                const optFiltro = document.createElement('option');
+                optFiltro.value = m.valor;
+                optFiltro.textContent = m.label;
+                filtroMetodo.appendChild(optFiltro);
+            });
+            
+            // Adicionar cartões ao formulário e ao filtro
             cartoes.forEach(c => {
                 const opt = document.createElement('option');
                 opt.value       = c.nome;
                 opt.textContent = c.nome;
                 metSelect.appendChild(opt);
+                
+                // Adicionar também ao filtro
+                const optFiltro = document.createElement('option');
+                optFiltro.value = c.nome;
+                optFiltro.textContent = c.nome;
+                filtroMetodo.appendChild(optFiltro);
             });
         } catch (e) { console.error('Erro ao popular selects', e); }
     }
@@ -109,6 +153,8 @@ document.addEventListener('DOMContentLoaded', () => {
         idEdicao             = null;
         tipoLancamentoEdicao = 'unico';
         form.reset();
+        ehAssinaturaInput.checked = false;  // ✅ NOVO - Reset checkbox
+        ehCartaoInput.checked = false;      // ✅ NOVO - Reset checkbox cartão
         document.getElementById('modal-titulo').innerText = 'Novo Lançamento';
         // Reabilita e reseta tipo lançamento para 'unico'
         document.querySelectorAll('input[name="tipo_lancamento"]').forEach(radio => {
@@ -127,6 +173,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalEditarGrupo = document.getElementById('modal-editar-grupo');
 
     btnAbrirLimpeza.onclick = () => modalLimpeza.style.display = 'flex';
+
+    // ── Resetar Filtros ──────────────────────────────────────────────────────
+    btnResetarFiltros.onclick = () => {
+        // Reseta todos os filtros para os valores padrão
+        filtroMesInput.value = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+        buscaInput.value = '';
+        filtroCategoria.value = '';
+        filtroMetodo.value = '';
+        filtroAssinatura.value = '';
+        filtroCartao.value = '';
+        ordemSelect.value = 'data-asc';
+        
+        // Recarrega o histórico com os filtros resetados
+        carregarHistorico();
+    };
 
     window.fecharModal = () => {
         modalCadastro.style.display  = 'none';
@@ -153,6 +214,8 @@ document.addEventListener('DOMContentLoaded', () => {
             tipo_lancamento: tipo_lancamento,
             total_parcelas:  tipo_lancamento === 'parcelado' ? parseInt(totalParcelasIn.value) : null,
             escopo_edicao:   escopo_edicao,
+            eh_assinatura:   ehAssinaturaInput.checked ? 1 : 0,
+            eh_cartao:       ehCartaoInput.checked ? 1 : 0,
         };
 
         const res    = await fetch('api/api_extrato.php', {
@@ -208,9 +271,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Carregar histórico ───────────────────────────────────────────────────
     async function carregarHistorico() {
-        const mes   = filtroMesInput.value;
-        const busca = buscaInput.value.toLowerCase();
-        const ordem = ordemSelect.value;
+        const mes      = filtroMesInput.value;
+        const busca    = buscaInput.value.toLowerCase();
+        const ordem    = ordemSelect.value;
+        const categoria = filtroCategoria.value;
+        const metodo   = filtroMetodo.value;
+        const assinatura = filtroAssinatura.value;
+        const cartao   = filtroCartao.value;
 
         try {
             const res  = await fetch(`api/api_extrato.php?mes=${mes}`);
@@ -223,6 +290,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 );
             }
 
+            // Filtro por categoria
+            if (categoria) {
+                transacoes = transacoes.filter(t =>
+                    t.categoria === categoria
+                );
+            }
+
+            // Filtro por método de pagamento
+            if (metodo) {
+                transacoes = transacoes.filter(t =>
+                    t.metodo === metodo
+                );
+            }
+
+            // Filtro por assinatura
+            if (assinatura === 'assinatura') {
+                transacoes = transacoes.filter(t =>
+                    t.eh_assinatura == 1
+                );
+            } else if (assinatura === 'nao-assinatura') {
+                transacoes = transacoes.filter(t =>
+                    t.eh_assinatura == 0
+                );
+            }
+
+            // Filtro por cartão
+            if (cartao === 'cartao') {
+                transacoes = transacoes.filter(t =>
+                    t.eh_cartao == 1
+                );
+            } else if (cartao === 'nao-cartao') {
+                transacoes = transacoes.filter(t =>
+                    t.eh_cartao == 0
+                );
+            }
+
             transacoes.sort((a, b) => {
                 if (ordem === 'data-desc')  return new Date(b.data) - new Date(a.data);
                 if (ordem === 'data-asc')   return new Date(a.data) - new Date(b.data);
@@ -231,12 +334,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 return 0;
             });
 
+            // ✅ NOVO: Calcular receitas SEM filtros (sempre do mês todo)
+            const res_data  = await fetch(`api/api_extrato.php?mes=${mes}`);
+            const data_receitas = await res_data.json();
+            let todasTransacoes = Array.isArray(data_receitas) ? data_receitas : (data_receitas.transacoes || []);
+            
+            const somaReceitasTotal = todasTransacoes.filter(t => t.tipo === 'receita')
+                                                    .reduce((sum, t) => sum + parseFloat(t.valor || 0), 0);
+
+            // Calcular despesas COM filtros (apenas o que é exibido)
+            const somaDespesas = transacoes.filter(t => t.tipo === 'despesa')
+                                          .reduce((sum, t) => sum + parseFloat(t.valor || 0), 0);
+            
+            const saldo = somaReceitasTotal - somaDespesas;
+
+            // Atualizar resumo de filtros - sempre aparecer quando há transações
+            if (transacoes.length > 0) {
+                resumoFiltros.style.display = 'grid';
+                document.getElementById('soma-receitas').textContent = `R$ ${somaReceitasTotal.toFixed(2).replace('.', ',')}`;
+                document.getElementById('soma-despesas').textContent = `R$ ${somaDespesas.toFixed(2).replace('.', ',')}`;
+                document.getElementById('soma-saldo').textContent = `R$ ${saldo.toFixed(2).replace('.', ',')}`;
+            } else {
+                resumoFiltros.style.display = 'none';
+            }
+
             listaDiv.innerHTML = '';
 
             if (transacoes.length === 0) {
                 const vazio = document.createElement('p');
                 vazio.style.cssText = 'text-align:center;color:var(--text-secondary);margin-top:40px;';
-                vazio.textContent = 'Nenhuma movimentação encontrada para este mês.';
+                vazio.textContent = 'Nenhuma movimentação encontrada para este filtro.';
                 listaDiv.appendChild(vazio);
                 return;
             }
@@ -322,6 +449,8 @@ document.addEventListener('DOMContentLoaded', () => {
         tipoInput.value  = t.tipo;
         catSelect.value  = t.categoria;
         metSelect.value  = t.metodo;
+        ehAssinaturaInput.checked = (t.eh_assinatura == 1);  // ✅ NOVO
+        ehCartaoInput.checked = (t.eh_cartao == 1);          // ✅ NOVO
         document.getElementById('modal-titulo').innerText = 'Editar Lançamento';
 
         // Exibir o bloco de tipo de lançamento como somente leitura
@@ -409,8 +538,16 @@ document.addEventListener('DOMContentLoaded', () => {
     filtroMesInput.onchange = carregarHistorico;
     buscaInput.oninput      = carregarHistorico;
     ordemSelect.onchange    = carregarHistorico;
+    filtroCategoria.onchange = carregarHistorico;
+    filtroMetodo.onchange = carregarHistorico;
+    filtroAssinatura.onchange = carregarHistorico;
+    filtroCartao.onchange = carregarHistorico;
 
-    carregarHistorico();
+    // Inicializar: popular selects e depois carregar histórico
+    (async () => {
+        await popularSelects(); // Aguarda população das categorias
+        carregarHistorico();    // Depois carrega o histórico
+    })();
 });
 
 // ── Tema ─────────────────────────────────────────────────────────────────────

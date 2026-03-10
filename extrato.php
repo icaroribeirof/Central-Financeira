@@ -29,6 +29,7 @@ $usuario_nome = $_SESSION['usuario_nome'];
             <div class="header-btns">
                 <button class="btn-novo" id="btn-abrir-cadastro">+ Novo Lançamento</button>
                 <button class="btn-limpeza" id="btn-abrir-limpeza">🗑️ Limpar Mês</button>
+                <button class="btn-resetar" id="btn-resetar-filtros">🔄 Resetar Filtros</button>
             </div>
         </div>
 
@@ -42,6 +43,34 @@ $usuario_nome = $_SESSION['usuario_nome'];
                 <input type="text" id="input-busca" placeholder="Ex: Mercado, Aluguel...">
             </div>
             <div class="col-input">
+                <label>Filtrar Categoria:</label>
+                <select id="filtro-categoria">
+                    <option value="">Todas as Categorias</option>
+                </select>
+            </div>
+            <div class="col-input">
+                <label>Filtrar Forma de Pagamento:</label>
+                <select id="filtro-metodo">
+                    <option value="">Todas as Formas</option>
+                </select>
+            </div>
+            <div class="col-input">
+                <label>Filtrar Assinatura:</label>
+                <select id="filtro-assinatura">
+                    <option value="">Todos</option>
+                    <option value="assinatura">Assinatura</option>
+                    <option value="nao-assinatura">Não Assinatura</option>
+                </select>
+            </div>
+            <div class="col-input">
+                <label>Filtrar Cartão:</label>
+                <select id="filtro-cartao">
+                    <option value="">Todos</option>
+                    <option value="cartao">Cartão</option>
+                    <option value="nao-cartao">Não Cartão</option>
+                </select>
+            </div>
+            <div class="col-input">
                 <label>Ordenar por:</label>
                 <select id="ordem-select">
                     <option value="data-asc">Data (Mais antigo)</option>
@@ -49,6 +78,21 @@ $usuario_nome = $_SESSION['usuario_nome'];
                     <option value="valor-desc">Maior Valor</option>
                     <option value="valor-asc">Menor Valor</option>
                 </select>
+            </div>
+        </div>
+
+        <div id="resumo-filtros" class="resumo-filtros" style="display: none;">
+            <div class="card-resumo-filtro receitas">
+                <span class="label">Total Receitas</span>
+                <p id="soma-receitas">R$ 0,00</p>
+            </div>
+            <div class="card-resumo-filtro despesas">
+                <span class="label">Total Despesas</span>
+                <p id="soma-despesas">R$ 0,00</p>
+            </div>
+            <div class="card-resumo-filtro saldo">
+                <span class="label">Saldo</span>
+                <p id="soma-saldo">R$ 0,00</p>
             </div>
         </div>
 
@@ -122,6 +166,22 @@ $usuario_nome = $_SESSION['usuario_nome'];
                     <!-- INFO: aviso recorrente -->
                     <div class="col-input col-full" id="aviso-recorrente" style="display:none;">
                         <p class="info-box">🔁 Serão gerados lançamentos mensais automáticos para os próximos <strong>24 meses</strong> a partir da data selecionada.</p>
+                    </div>
+
+                    <!-- NOVO: Checkbox de Assinatura -->
+                    <div class="col-input col-full" style="display: flex; flex-direction: row; align-items: center; gap: 10px; margin-top: 10px;">
+                        <input type="checkbox" id="eh-assinatura" style="width: 20px; height: 20px; cursor: pointer;">
+                        <label for="eh-assinatura" style="margin: 0; text-transform: none; font-weight: normal; cursor: pointer;">
+                            ✓ Marcar como assinatura ou serviço recorrente
+                        </label>
+                    </div>
+
+                    <!-- NOVO: Checkbox de Cartão -->
+                    <div class="col-input col-full" style="display: flex; flex-direction: row; align-items: center; gap: 10px; margin-top: 10px;">
+                        <input type="checkbox" id="eh-cartao" style="width: 20px; height: 20px; cursor: pointer;">
+                        <label for="eh-cartao" style="margin: 0; text-transform: none; font-weight: normal; cursor: pointer;">
+                            💳 Marcar como transação em cartão
+                        </label>
                     </div>
                 </div>
                 <br>

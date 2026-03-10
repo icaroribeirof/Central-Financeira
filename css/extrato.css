@@ -101,12 +101,14 @@ main {
     padding: 15px;
     border-radius: 10px;
     display: flex;
+    flex-wrap: wrap;
     gap: 15px;
     margin-bottom: 25px;
 }
 
 .col-input {
-    flex: 1;
+    flex: 1 1 calc(50% - 7.5px);
+    min-width: 150px;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -161,6 +163,8 @@ input, select {
 /* BOTÕES E MODAL */
 .btn-novo { background: var(--accent-color); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
 .btn-limpeza { background: var(--danger-color); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+.btn-resetar { background: #9b59b6; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; }
+.btn-resetar:hover { background: #8e44ad; transform: scale(1.05); }
 .btn-edit, .btn-delete { background: none; border: none; cursor: pointer; font-size: 1.1rem; }
 .btn-cancelar { background: var(--cancel-color); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
 
@@ -302,6 +306,98 @@ input, select {
 
 .grid-form .col-full {
     flex: 1 1 100%;
+}
+
+/* ── Resumo de Filtros ────────────────────────────────────────────────────── */
+.resumo-filtros {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.card-resumo-filtro {
+    background-color: var(--bg-card);
+    border: 2px solid var(--border-color);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.card-resumo-filtro:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.card-resumo-filtro .label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+}
+
+.card-resumo-filtro p {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--text-main);
+}
+
+/* ── Receitas - Destaque em Verde ──────────────────────────────────────────── */
+.card-resumo-filtro.receitas {
+    border: 2px solid var(--success-color);
+    background: linear-gradient(135deg, rgba(46, 204, 113, 0.05) 0%, rgba(46, 204, 113, 0.02) 100%);
+}
+
+.card-resumo-filtro.receitas p {
+    color: var(--success-color);
+    text-shadow: 0 1px 2px rgba(46, 204, 113, 0.2);
+}
+
+.card-resumo-filtro.receitas .label {
+    color: var(--success-color);
+}
+
+/* ── Despesas - Destaque em Vermelho ───────────────────────────────────────── */
+.card-resumo-filtro.despesas {
+    border: 2px solid var(--danger-color);
+    background: linear-gradient(135deg, rgba(231, 76, 60, 0.05) 0%, rgba(231, 76, 60, 0.02) 100%);
+}
+
+.card-resumo-filtro.despesas p {
+    color: var(--danger-color);
+    text-shadow: 0 1px 2px rgba(231, 76, 60, 0.2);
+}
+
+.card-resumo-filtro.despesas .label {
+    color: var(--danger-color);
+}
+
+/* ── Saldo - Destaque em Azul (mais prominente) ──────────────────────────── */
+.card-resumo-filtro.saldo {
+    border: 2px solid var(--accent-color);
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.08) 0%, rgba(52, 152, 219, 0.03) 100%);
+    transform: scale(1.02);
+}
+
+.card-resumo-filtro.saldo:hover {
+    transform: scale(1.06) translateY(-4px);
+}
+
+.card-resumo-filtro.saldo p {
+    color: var(--accent-color);
+    text-shadow: 0 1px 2px rgba(52, 152, 219, 0.3);
+    font-size: 1.8rem;
+}
+
+.card-resumo-filtro.saldo .label {
+    color: var(--accent-color);
+    font-weight: 900;
 }
 
 

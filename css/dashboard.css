@@ -92,7 +92,11 @@ main { max-width: 1000px; margin: 20px auto; padding: 0 20px; }
 
 .receitas { border-top: 5px solid var(--green); }
 .despesas { border-top: 5px solid var(--red); }
+.cartao { border-top: 5px solid #9b59b6; }
 .saldo { border-top: 5px solid var(--accent-color); }
+
+/* Cor do texto para cartão */
+.cartao p { color: #9b59b6; }
 
 /* GRÁFICOS */
 .charts-grid {

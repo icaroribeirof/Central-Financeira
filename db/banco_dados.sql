@@ -55,3 +55,9 @@ ALTER TABLE transacoes ADD COLUMN tipo_lancamento ENUM('unico','recorrente','par
 ALTER TABLE transacoes ADD COLUMN grupo_id CHAR(36) NULL;
 ALTER TABLE transacoes ADD COLUMN parcela_atual INT NULL;
 ALTER TABLE transacoes ADD COLUMN total_parcelas INT NULL;
+
+-- Campo para distinguir assinaturas de transações normais
+ALTER TABLE transacoes ADD COLUMN eh_assinatura TINYINT NOT NULL DEFAULT 0;
+
+-- Campo para distinguir transações em cartão de outras formas
+ALTER TABLE transacoes ADD COLUMN eh_cartao TINYINT NOT NULL DEFAULT 0;

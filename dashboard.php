@@ -41,12 +41,19 @@ $usuario_nome = $_SESSION['usuario_nome'];
                 <p id="total-receitas">R$ 0,00</p>
             </div>
             <div class="card-resumo despesas">
-                <h3>Despesas</h3>
+                <h3>Despesas (Não Cartão)</h3>
                 <p id="total-despesas">R$ 0,00</p>
             </div>
+        </div>
+
+        <div class="resumo-container">
             <div class="card-resumo saldo">
                 <h3>Saldo Atual</h3>
                 <p id="total-saldo">R$ 0,00</p>
+            </div>
+            <div class="card-resumo cartao">
+                <h3>Despesas (Cartão)</h3>
+                <p id="total-cartao">R$ 0,00</p>
             </div>
         </div>
 
@@ -56,8 +63,15 @@ $usuario_nome = $_SESSION['usuario_nome'];
                 <canvas id="chartCategorias"></canvas>
             </div>
             <div class="card-chart">
-                <h4>Evolução de Gastos (6 meses)</h4>
-                <canvas id="chartEvolucao"></canvas>
+                <h4>Evolução - Despesas Não Cartão (6 meses)</h4>
+                <canvas id="chartEvolucaoNaoCartao"></canvas>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="card-chart">
+                <h4>Evolução - Despesas Cartão (6 meses)</h4>
+                <canvas id="chartEvolucaoCartao"></canvas>
             </div>
         </div>
     </main>
