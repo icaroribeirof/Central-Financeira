@@ -35,6 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const ctx = document.getElementById('chartCategorias').getContext('2d');
         if (window.chartPizza) window.chartPizza.destroy();
 
+        const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim();
+
         window.chartPizza = new Chart(ctx, {
             type: 'doughnut',
             data: {
@@ -47,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             options: {
                 responsive: true,
-                plugins: { legend: { position: 'bottom', labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-main') } } }
+                plugins: { legend: { position: 'bottom', labels: { color: textColor, font: { size: 12 } } } }
             }
         });
     }
@@ -55,6 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderizarEvolucaoNaoCartao(dadosEvo) {
         const ctx = document.getElementById('chartEvolucaoNaoCartao').getContext('2d');
         if (window.chartBarNaoCartao) window.chartBarNaoCartao.destroy();
+
+        const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim();
 
         window.chartBarNaoCartao = new Chart(ctx, {
             type: 'bar',
@@ -69,9 +73,24 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             options: {
                 responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: textColor,
+                            font: { size: 12 }
+                        }
+                    }
+                },
                 scales: {
-                    y: { beginAtZero: true, grid: { display: false } },
-                    x: { grid: { display: false } }
+                    y: { 
+                        beginAtZero: true, 
+                        grid: { display: false },
+                        ticks: { color: textColor }
+                    },
+                    x: { 
+                        grid: { display: false },
+                        ticks: { color: textColor }
+                    }
                 }
             }
         });
@@ -80,6 +99,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderizarEvolucaoCartao(dadosEvo) {
         const ctx = document.getElementById('chartEvolucaoCartao').getContext('2d');
         if (window.chartBarCartao) window.chartBarCartao.destroy();
+
+        const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim();
 
         window.chartBarCartao = new Chart(ctx, {
             type: 'bar',
@@ -94,9 +115,24 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             options: {
                 responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: textColor,
+                            font: { size: 12 }
+                        }
+                    }
+                },
                 scales: {
-                    y: { beginAtZero: true, grid: { display: false } },
-                    x: { grid: { display: false } }
+                    y: { 
+                        beginAtZero: true, 
+                        grid: { display: false },
+                        ticks: { color: textColor }
+                    },
+                    x: { 
+                        grid: { display: false },
+                        ticks: { color: textColor }
+                    }
                 }
             }
         });
@@ -106,12 +142,17 @@ document.addEventListener('DOMContentLoaded', () => {
     atualizarDashboard();
 });
 
-// Lógica de Tema (Mantida)
+// Lógica de Tema (Mantida e Melhorada)
 const aplicarTema = (theme) => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
     const btn = document.getElementById('theme-toggle');
     if (btn) btn.innerHTML = theme === 'light' ? '🌙 Modo Escuro' : '☀️ Modo Claro';
+    
+    // Recarregar gráficos quando tema muda para atualizar cores
+    if (window.chartPizza || window.chartBarNaoCartao || window.chartBarCartao) {
+        atualizarDashboard();
+    }
 };
 aplicarTema(localStorage.getItem('theme') || 'dark');
 document.getElementById('theme-toggle').onclick = () => {
