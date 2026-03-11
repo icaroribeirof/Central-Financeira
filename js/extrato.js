@@ -551,18 +551,24 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ── Tema ─────────────────────────────────────────────────────────────────────
+// Lógica de Tema
 const aplicarTema = (theme) => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
     const btn = document.getElementById('theme-toggle');
     if (btn) btn.innerHTML = theme === 'light' ? '🌙 Modo Escuro' : '☀️ Modo Claro';
 };
-aplicarTema(localStorage.getItem('theme') || 'dark');
 
+// Aplicar tema salvo ou padrão ao carregar
+const temaSalvo = localStorage.getItem('theme') || 'dark';
+aplicarTema(temaSalvo);
+
+// Listener do botão
 const btnTheme = document.getElementById('theme-toggle');
 if (btnTheme) {
     btnTheme.onclick = () => {
-        const novo = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-        aplicarTema(novo);
+        const temaAtual = document.documentElement.getAttribute('data-theme');
+        const novoTema = temaAtual === 'light' ? 'dark' : 'light';
+        aplicarTema(novoTema);
     };
 }

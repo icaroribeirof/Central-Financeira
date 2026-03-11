@@ -25,7 +25,7 @@ body {
     color: var(--text-main);
     margin: 0;
     font-size: 0.9rem; /* Fonte reduzida conforme padrão */
-    transition: 0.3s;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* NAVBAR UNIFICADA */

@@ -32,11 +32,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderizarPizza(dadosCat) {
-        const ctx = document.getElementById('chartCategorias').getContext('2d');
+        // Destruir gráfico anterior se existir
         if (window.chartPizza) window.chartPizza.destroy();
 
-        const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim();
+        // Pegar cor computada do body (lê a variável CSS atual)
+        const bodyStyle = window.getComputedStyle(document.body);
+        const textColor = bodyStyle.color;
 
+        // Recriar o canvas
+        const container = document.getElementById('chartCategorias').parentElement;
+        const oldCanvas = document.getElementById('chartCategorias');
+        const newCanvas = document.createElement('canvas');
+        newCanvas.id = 'chartCategorias';
+        container.replaceChild(newCanvas, oldCanvas);
+
+        // Renderizar novo gráfico com cor correta
+        const ctx = newCanvas.getContext('2d');
         window.chartPizza = new Chart(ctx, {
             type: 'doughnut',
             data: {
@@ -55,11 +66,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderizarEvolucaoNaoCartao(dadosEvo) {
-        const ctx = document.getElementById('chartEvolucaoNaoCartao').getContext('2d');
+        // Destruir gráfico anterior se existir
         if (window.chartBarNaoCartao) window.chartBarNaoCartao.destroy();
 
-        const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim();
+        // Pegar cor computada do body (lê a variável CSS atual)
+        const bodyStyle = window.getComputedStyle(document.body);
+        const textColor = bodyStyle.color;
 
+        // Recriar o canvas
+        const container = document.getElementById('chartEvolucaoNaoCartao').parentElement;
+        const oldCanvas = document.getElementById('chartEvolucaoNaoCartao');
+        const newCanvas = document.createElement('canvas');
+        newCanvas.id = 'chartEvolucaoNaoCartao';
+        container.replaceChild(newCanvas, oldCanvas);
+
+        // Renderizar novo gráfico com cor correta
+        const ctx = newCanvas.getContext('2d');
         window.chartBarNaoCartao = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -97,11 +119,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderizarEvolucaoCartao(dadosEvo) {
-        const ctx = document.getElementById('chartEvolucaoCartao').getContext('2d');
+        // Destruir gráfico anterior se existir
         if (window.chartBarCartao) window.chartBarCartao.destroy();
 
-        const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim();
+        // Pegar cor computada do body (lê a variável CSS atual)
+        const bodyStyle = window.getComputedStyle(document.body);
+        const textColor = bodyStyle.color;
 
+        // Recriar o canvas
+        const container = document.getElementById('chartEvolucaoCartao').parentElement;
+        const oldCanvas = document.getElementById('chartEvolucaoCartao');
+        const newCanvas = document.createElement('canvas');
+        newCanvas.id = 'chartEvolucaoCartao';
+        container.replaceChild(newCanvas, oldCanvas);
+
+        // Renderizar novo gráfico com cor correta
+        const ctx = newCanvas.getContext('2d');
         window.chartBarCartao = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -142,20 +175,36 @@ document.addEventListener('DOMContentLoaded', () => {
     atualizarDashboard();
 });
 
-// Lógica de Tema (Mantida e Melhorada)
+// Lógica de Tema
 const aplicarTema = (theme) => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
     const btn = document.getElementById('theme-toggle');
     if (btn) btn.innerHTML = theme === 'light' ? '🌙 Modo Escuro' : '☀️ Modo Claro';
     
-    // Recarregar gráficos quando tema muda para atualizar cores
+    // Recarregar gráficos quando tema muda (sem recarregar página)
     if (window.chartPizza || window.chartBarNaoCartao || window.chartBarCartao) {
-        atualizarDashboard();
+        const mesSelecionado = document.getElementById('filtro-mes').value;
+        
+        fetch(`api/api_dashboard.php?mes=${mesSelecionado}`)
+            .then(response => response.json())
+            .then(dados => {
+                // Renderizar gráficos com cores atualizadas
+                renderizarPizza(dados.categorias);
+                renderizarEvolucaoNaoCartao(dados.evolucao_nao_cartao);
+                renderizarEvolucaoCartao(dados.evolucao_cartao);
+            })
+            .catch(error => console.error("Erro ao recarregar gráficos:", error));
     }
 };
-aplicarTema(localStorage.getItem('theme') || 'dark');
+
+// Aplicar tema salvo ou padrão ao carregar
+const temaSalvo = localStorage.getItem('theme') || 'dark';
+aplicarTema(temaSalvo);
+
+// Listener do botão
 document.getElementById('theme-toggle').onclick = () => {
-    const novo = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-    aplicarTema(novo);
+    const temaAtual = document.documentElement.getAttribute('data-theme');
+    const novoTema = temaAtual === 'light' ? 'dark' : 'light';
+    aplicarTema(novoTema);
 };
