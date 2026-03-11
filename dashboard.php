@@ -16,6 +16,7 @@ $usuario_nome = $_SESSION['usuario_nome'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="shortcut icon" href="icon/money-bag.png">
+    <script src="js/animations.js/"></script>
     <title>Dashboard - Central Financeira</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
