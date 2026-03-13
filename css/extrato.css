@@ -7,31 +7,61 @@
     --text-secondary: #b0b0b0;
     --border-color: #333333;
     --input-bg: #252525;
-    --accent-color: #3498db;  /* Azul */
-    --danger-color: #e74c3c;  /* Vermelho */
-    --success-color: #2ecc71; /* Verde */
-    --cancel-color: #95a5a6; /* Cinza */
+    --accent-color: #3498db;
+    /* Azul */
+    --danger-color: #e74c3c;
+    /* Vermelho */
+    --success-color: #2ecc71;
+    /* Verde */
+    --cancel-color: #95a5a6;
+    /* Cinza */
 }
 
 /* ========== ANIMAÇÕES ========== */
 @keyframes slideInUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes slideInRight {
-    from { opacity: 0; transform: translateX(50px); }
-    to { opacity: 1; transform: translateX(0); }
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
 }
 
 [data-theme="light"] {
@@ -49,7 +79,8 @@ body {
     background-color: var(--bg-body);
     color: var(--text-main);
     margin: 0;
-    font-size: 0.9rem; /* Fonte reduzida */
+    font-size: 0.9rem;
+    /* Fonte reduzida */
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -57,7 +88,7 @@ body {
 nav {
     background-color: var(--bg-nav);
     padding: 0.7rem 0;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .nav-container {
@@ -142,7 +173,8 @@ label {
     text-transform: uppercase;
 }
 
-input, select {
+input,
+select {
     background-color: var(--input-bg);
     border: 1px solid var(--border-color);
     color: var(--text-main);
@@ -157,12 +189,13 @@ input, select {
     border: 1px solid var(--border-color);
     color: var(--text-main);
     padding: 10px 25px;
-    border-radius: 50px; /* Formato pílula */
+    border-radius: 50px;
+    /* Formato pílula */
     margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s;
 }
 
@@ -171,30 +204,97 @@ input, select {
 }
 
 /* Cores de detalhe lateral */
-.item-movimentacao.receita { border-left: 6px solid var(--success-color); }
-.item-movimentacao.despesa { border-left: 6px solid var(--danger-color); }
+.item-movimentacao.receita {
+    border-left: 6px solid var(--success-color);
+}
 
-.info-principal h4 { margin: 0; font-size: 0.9rem; font-weight: 600; }
-.info-principal span { font-size: 0.75rem; color: var(--text-secondary); }
+.item-movimentacao.despesa {
+    border-left: 6px solid var(--danger-color);
+}
 
-.valor-mov { font-weight: bold; font-size: 0.9rem; }
-.valor-mov.receita { color: var(--success-color); }
-.valor-mov.despesa { color: var(--danger-color); }
+.info-principal h4 {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.info-principal span {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.valor-mov {
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.valor-mov.receita {
+    color: var(--success-color);
+}
+
+.valor-mov.despesa {
+    color: var(--danger-color);
+}
 
 /* BOTÕES E MODAL */
-.btn-novo { background: var(--accent-color); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-.btn-limpeza { background: var(--danger-color); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-.btn-resetar { background: #9b59b6; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; }
-.btn-resetar:hover { background: #8e44ad; transform: scale(1.05); }
-.btn-edit, .btn-delete { background: none; border: none; cursor: pointer; font-size: 1.1rem; }
-.btn-cancelar { background: var(--cancel-color); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+.btn-novo {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-limpeza {
+    background: var(--danger-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-resetar {
+    background: #9b59b6;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-edit,
+.btn-delete {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.btn-cancelar {
+    background: var(--cancel-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
 
 .modal {
     display: none;
     position: fixed;
     z-index: 1000;
-    left: 0; top: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.7);
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
     align-items: center;
     justify-content: center;
 }
@@ -207,6 +307,7 @@ input, select {
     width: 90%;
     max-width: 500px;
 }
+
 /* ── Tipo de Lançamento (radio cards) ─────────────────────────────────────── */
 .col-full {
     flex: 0 0 100%;
@@ -233,7 +334,9 @@ input, select {
     background-color: var(--input-bg);
 }
 
-.radio-card input[type="radio"] { display: none; }
+.radio-card input[type="radio"] {
+    display: none;
+}
 
 .radio-card .radio-icon {
     font-size: 1.3rem;
@@ -254,7 +357,9 @@ input, select {
 }
 
 .radio-card.ativo .radio-label,
-.radio-card:has(input:checked) .radio-label { color: var(--accent-color); }
+.radio-card:has(input:checked) .radio-label {
+    color: var(--accent-color);
+}
 
 /* Hint de parcelas */
 .hint-parcelas {
@@ -343,19 +448,25 @@ input, select {
     padding: 20px;
     border-radius: 12px;
     text-align: center;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    animation: slideInUp 0.6s ease forwards;
-    opacity: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: scale(1);
+    transition: transform 0.2s;
 }
 
-.card-resumo-filtro:nth-child(1) { animation-delay: 0.1s; }
-.card-resumo-filtro:nth-child(2) { animation-delay: 0.2s; }
-.card-resumo-filtro:nth-child(3) { animation-delay: 0.3s; }
-
 .card-resumo-filtro:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    transform: scale(1.03);
+}
+
+.card-resumo-filtro:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.card-resumo-filtro:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.card-resumo-filtro:nth-child(3) {
+    animation-delay: 0.3s;
 }
 
 .card-resumo-filtro .label {
@@ -409,11 +520,6 @@ input, select {
 .card-resumo-filtro.saldo {
     border: 2px solid var(--accent-color);
     background: linear-gradient(135deg, rgba(52, 152, 219, 0.08) 0%, rgba(52, 152, 219, 0.03) 100%);
-    transform: scale(1.02);
-}
-
-.card-resumo-filtro.saldo:hover {
-    transform: scale(1.06) translateY(-4px);
 }
 
 .card-resumo-filtro.saldo p {
@@ -426,5 +532,3 @@ input, select {
     color: var(--accent-color);
     font-weight: 900;
 }
-
-
