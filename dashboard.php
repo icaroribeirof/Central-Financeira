@@ -32,7 +32,7 @@ $usuario_nome = $_SESSION['usuario_nome'];
             </div>
             <div class="filter-box">
                 <label style="font-size: 0.7rem; font-weight: bold;">MÊS:</label>
-                <input type="month" id="dash-mes">
+                <input type="month" id="dash-mes" class="dash-mes">
             </div>
         </div>
 

@@ -72,6 +72,14 @@
     --text-secondary: #666666;
     --border-color: #eeeeee;
     --input-bg: #ffffff;
+
+    input[type="month"]::-webkit-calendar-picker-indicator {
+        filter: invert(0);
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(0);
+    }
 }
 
 body {
@@ -531,4 +539,26 @@ select {
 .card-resumo-filtro.saldo .label {
     color: var(--accent-color);
     font-weight: 900;
+}
+
+/* ALTERA A COR DO ÍCONE DE CALENDÁRIO */
+input[type="month"]::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* 0 é original, 1 é invertido */
+    cursor: pointer;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* 0 é original, 1 é invertido */
+    cursor: pointer;
+}
+
+/* REMOVE AS SETAS DE CAMPO NUMÉRICO */
+#valor::-webkit-outer-spin-button,
+#valor::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.valor {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }

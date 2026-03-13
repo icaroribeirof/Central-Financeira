@@ -17,6 +17,10 @@
     --text-main: #2c3e50;
     --text-secondary: #666666;
     --border-color: #eeeeee;
+
+    input[type="month"]::-webkit-calendar-picker-indicator {
+        filter: invert(0);
+    }
 }
 
 /* ========== ANIMAÇÕES E TRANSIÇÕES ========== */
@@ -273,4 +277,10 @@ main {
     color: var(--text-main);
     font-family: inherit;
     outline: none;
+}
+
+/* ALTERA A COR DO ÍCONE DE CALENDÁRIO */
+input[type="month"]::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* 0 é original, 1 é invertido */
+    cursor: pointer;
 }

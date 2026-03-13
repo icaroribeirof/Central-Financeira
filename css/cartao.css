@@ -42,6 +42,10 @@
     --border-color: #eeeeee;
     --input-bg: #ffffff;
     --progress-bg: #e0e0e0;
+
+    input[type="month"]::-webkit-calendar-picker-indicator {
+        filter: invert(0);
+    }
 }
 
 body {
@@ -282,4 +286,31 @@ input, select {
     margin: -8px 0 10px 0;
     font-size: 0.78rem;
     color: var(--text-secondary);
+}
+
+/* ALTERA A COR DO ÍCONE DE CALENDÁRIO */
+input[type="month"]::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* 0 é original, 1 é invertido */
+    cursor: pointer;
+}
+
+/* REMOVE AS SETAS DE CAMPO NUMÉRICO */
+#limite-total::-webkit-outer-spin-button,
+#limite-total::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.limite-total {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+#dia-fechamento::-webkit-outer-spin-button,
+#dia-fechamento::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.dia-fechamento {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
