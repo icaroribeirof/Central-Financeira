@@ -16,6 +16,7 @@ $usuario_nome = $_SESSION['usuario_nome'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/categorias.css">
+    <link rel="stylesheet" href="css/responsivo_categorias.css">
     <link rel="shortcut icon" href="icon/money-bag.png">
     <script src="js/animations.js"></script>
     <title>Categorias - Central Financeira</title>
@@ -64,5 +65,6 @@ $usuario_nome = $_SESSION['usuario_nome'];
     </div>
 
     <script src="js/categorias.js"></script>
+    <script src="js/hamburger-menu.js"></script>
 </body>
 </html>
