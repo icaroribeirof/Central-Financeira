@@ -65,6 +65,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/login.css">
     <link rel="shortcut icon" href="icon/money-bag.png">
+    <link rel="apple-touch-icon" href="icon/icon.png">
+    <meta name="apple-mobile-web-app-title" content="Central Financeira">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
