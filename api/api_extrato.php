@@ -54,7 +54,7 @@ if ($method === 'POST') {
     try {
         // ── EDIÇÃO de lançamento existente ──
         if (!empty($d['id'])) {
-            $escopo          = $d['escopo_edicao']   ?? 'unico';
+            $escopo          = $d['escopo'] ?? $d['escopo_edicao'] ?? 'unico';
             $novo_tipo_lanc  = $d['tipo_lancamento']  ?? 'unico';
             $total_parcelas  = (int)($d['total_parcelas'] ?? 1);
 
@@ -77,16 +77,33 @@ if ($method === 'POST') {
             // ── Caso 1: tipo NÃO mudou — atualiza campos normalmente ──
             if ($novo_tipo_lanc === $tipo_original) {
                 if ($escopo === 'futuros' && $t['grupo_id']) {
-                    $stmt = $pdo->prepare(
-                        "UPDATE transacoes
-                         SET descricao = ?, valor = ?, tipo = ?, categoria = ?, metodo = ?, eh_assinatura = ?, eh_cartao = ?
+                    
+                    // Busca todos os itens futuros deste grupo para poder aplicar offset nas datas
+                    $futuros = $pdo->prepare(
+                        "SELECT id, parcela_atual FROM transacoes 
                          WHERE grupo_id = ? AND usuario_id = ? AND parcela_atual >= ?"
                     );
-                    $stmt->execute([
-                        $d['descricao'], $d['valor'], $d['tipo'],
-                        $d['categoria'], $d['metodo'], $d['eh_assinatura'] ?? 0, $d['eh_cartao'] ?? 0,
-                        $t['grupo_id'], $usuario_id, $t['parcela_atual']
-                    ]);
+                    $futuros->execute([$t['grupo_id'], $usuario_id, $t['parcela_atual']]);
+                    $itens_futuros = $futuros->fetchAll();
+
+                    $stmt = $pdo->prepare(
+                        "UPDATE transacoes
+                         SET descricao = ?, valor = ?, data = ?, tipo = ?, categoria = ?, metodo = ?, eh_assinatura = ?, eh_cartao = ?
+                         WHERE id = ?"
+                    );
+
+                    foreach ($itens_futuros as $item) {
+                        // Calcula a diferença em meses baseado na parcela editada para avançar corretamente a data
+                        $diff_meses = $item['parcela_atual'] - $t['parcela_atual'];
+                        $nova_data = date('Y-m-d', strtotime("$data_base +$diff_meses months"));
+                        
+                        $stmt->execute([
+                            $d['descricao'], $d['valor'], $nova_data, $d['tipo'],
+                            $d['categoria'], $d['metodo'], $d['eh_assinatura'] ?? 0, $d['eh_cartao'] ?? 0,
+                            $item['id']
+                        ]);
+                    }
+
                 } else {
                     // escopo 'unico'
                     $stmt = $pdo->prepare(
@@ -102,13 +119,21 @@ if ($method === 'POST') {
                     ]);
                 }
 
-            // ── Caso 2: tipo mudou — exclui este item e gera os novos ──
+            // ── Caso 2: tipo mudou — exclui este(s) item(ns) e gera os novos ──
             } else {
-                // Remove apenas este lançamento
-                $del = $pdo->prepare(
-                    "DELETE FROM transacoes WHERE id = ? AND usuario_id = ?"
-                );
-                $del->execute([$d['id'], $usuario_id]);
+                
+                if ($escopo === 'futuros' && $t['grupo_id']) {
+                    $del = $pdo->prepare(
+                        "DELETE FROM transacoes WHERE grupo_id = ? AND usuario_id = ? AND parcela_atual >= ?"
+                    );
+                    $del->execute([$t['grupo_id'], $usuario_id, $t['parcela_atual']]);
+                } else {
+                    // Remove apenas este lançamento
+                    $del = $pdo->prepare(
+                        "DELETE FROM transacoes WHERE id = ? AND usuario_id = ?"
+                    );
+                    $del->execute([$d['id'], $usuario_id]);
+                }
 
                 // Gera novo grupo_id para os registros recriados
                 $grupo_id = sprintf(
