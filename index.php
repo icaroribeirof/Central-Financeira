@@ -57,93 +57,241 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Central Financeira</title>
-    <link rel="stylesheet" href="css/dashboard.css">
-    <link rel="stylesheet" href="css/login.css">
+    <title>Central Financeira - Acesso</title>
+    <!-- New CSS -->
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/components.css">
+    
     <link rel="shortcut icon" href="icon/money-bag.png">
     <link rel="apple-touch-icon" href="icon/icon.png">
     <meta name="apple-mobile-web-app-title" content="Central Financeira">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Phosphor Icons for a more premium look -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <style>
+        .auth-layout {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-body);
+            padding: var(--spacing-4);
+            /* Optional background pattern for premium feel */
+            background-image: radial-gradient(var(--border-subtle) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        
+        .auth-card {
+            width: 100%;
+            max-width: 400px;
+            animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            background-color: var(--bg-card);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: var(--spacing-8);
+        }
+
+        .auth-logo {
+            width: 48px;
+            height: 48px;
+            margin-bottom: var(--spacing-4);
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+            transition: transform 0.3s ease;
+        }
+        
+        .auth-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .auth-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.03em;
+        }
+
+        .auth-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-top: var(--spacing-1);
+        }
+
+        .tab-system {
+            display: flex;
+            background: var(--bg-body);
+            padding: 4px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-strong);
+            margin-bottom: var(--spacing-6);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .alert {
+            padding: var(--spacing-3) var(--spacing-4);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-4);
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-2);
+        }
+
+        .alert-error {
+            background-color: var(--danger-bg);
+            color: var(--danger-text);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .alert-success {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .theme-toggle-fixed {
+            position: fixed;
+            top: var(--spacing-4);
+            right: var(--spacing-4);
+            background: var(--bg-card);
+            border: 1px solid var(--border-strong);
+            color: var(--text-secondary);
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .theme-toggle-fixed:hover {
+            color: var(--text-primary);
+            transform: scale(1.1);
+            border-color: var(--border-focus);
+        }
+        
+        .btn-full {
+            width: 100%;
+            margin-top: var(--spacing-2);
+            padding: 0.75rem 1rem;
+        }
+    </style>
 </head>
 
-<body class="login-body">
-    <button id="theme-toggle" class="theme-switcher-btn">
-        <span>🌙 Modo Escuro</span>
+<body>
+    <button id="theme-toggle" class="theme-toggle-fixed" title="Alternar Tema">
+        <i class="ph ph-moon" id="theme-icon" style="font-size: 1.25rem;"></i>
     </button>
 
-    <div class="login-container">
-        <div class="login-box">
-            <div class="login-header">
-                <img src="icon/money-bag.png" alt="Logo" class="login-logo">
-                <h1>Central Financeira</h1>
-                
-                <?php if ($erro): ?>
-                    <p style="color: #ff4d4d; font-size: 0.8rem; margin-top: 10px;"><?php echo $erro; ?></p>
-                <?php endif; ?>
-                
-                <?php if ($sucesso): ?>
-                    <p style="color: #10b981; font-size: 0.8rem; margin-top: 10px;"><?php echo $sucesso; ?></p>
-                <?php endif; ?>
-
-                <div class="tab-system">
-                    <button id="tab-login" class="tab-btn active" onclick="switchTab('login')">Entrar</button>
-                    <button id="tab-register" class="tab-btn" onclick="switchTab('register')">Cadastrar</button>
-                </div>
+    <div class="auth-layout">
+        <div class="card auth-card">
+            <div class="auth-header">
+                <img src="icon/money-bag.png" alt="Logo" class="auth-logo">
+                <h1 class="auth-title">Central Financeira</h1>
+                <p class="auth-subtitle">Controle inteligente para o seu dinheiro</p>
             </div>
 
-            <form id="loginForm" class="auth-form" method="POST">
+            <?php if ($erro): ?>
+                <div class="alert alert-error animate-fade-in">
+                    <i class="ph ph-warning-circle" style="font-size: 1.125rem;"></i>
+                    <?php echo $erro; ?>
+                </div>
+            <?php endif; ?>
+            
+            <?php if ($sucesso): ?>
+                <div class="alert alert-success animate-fade-in">
+                    <i class="ph ph-check-circle" style="font-size: 1.125rem;"></i>
+                    <?php echo $sucesso; ?>
+                </div>
+            <?php endif; ?>
+
+            <div class="tab-system">
+                <button id="tab-login" class="tab-btn active" onclick="switchTab('login')">Entrar</button>
+                <button id="tab-register" class="tab-btn" onclick="switchTab('register')">Cadastrar</button>
+            </div>
+
+            <form id="loginForm" class="auth-form animate-fade-in" method="POST">
                 <input type="hidden" name="acao" value="login">
+                
                 <div class="input-group">
-                    <label>E-mail</label>
+                    <label class="label">E-mail</label>
                     <div class="input-wrapper">
-                        <i class="fa fa-envelope"></i>
-                        <input type="email" name="email" placeholder="seu@email.com" required>
+                        <i class="ph ph-envelope-simple"></i>
+                        <input type="email" name="email" class="input" placeholder="seu@email.com" required>
                     </div>
                 </div>
+                
                 <div class="input-group">
-                    <label>Senha</label>
+                    <label class="label">Senha</label>
                     <div class="input-wrapper">
-                        <i class="fa fa-lock"></i>
-                        <input type="password" name="senha" placeholder="Sua senha" required>
+                        <i class="ph ph-lock-key"></i>
+                        <input type="password" name="senha" class="input" placeholder="Sua senha" required>
                     </div>
                 </div>
-                <button type="submit" class="btn-login">Acessar Sistema</button>
+                
+                <button type="submit" class="btn btn-primary btn-full">Acessar Plataforma</button>
             </form>
 
-            <form id="registerForm" class="auth-form" method="POST" style="display: none;">
+            <form id="registerForm" class="auth-form animate-fade-in" method="POST" style="display: none;">
                 <input type="hidden" name="acao" value="cadastrar">
+                
                 <div class="input-group">
-                    <label>Nome Completo</label>
+                    <label class="label">Nome</label>
                     <div class="input-wrapper">
-                        <i class="fa fa-user"></i>
-                        <input type="text" name="nome" placeholder="Como quer ser chamado?" required>
+                        <i class="ph ph-user"></i>
+                        <input type="text" name="nome" class="input" placeholder="Como quer ser chamado?" required>
                     </div>
                 </div>
+                
                 <div class="input-group">
-                    <label>E-mail</label>
+                    <label class="label">E-mail</label>
                     <div class="input-wrapper">
-                        <i class="fa fa-envelope"></i>
-                        <input type="email" name="email" placeholder="seu@email.com" required>
+                        <i class="ph ph-envelope-simple"></i>
+                        <input type="email" name="email" class="input" placeholder="seu@email.com" required>
                     </div>
                 </div>
+                
                 <div class="input-group">
-                    <label>Nova Senha</label>
+                    <label class="label">Nova Senha</label>
                     <div class="input-wrapper">
-                        <i class="fa fa-key"></i>
-                        <input type="password" name="senha" placeholder="Crie uma senha" required>
+                        <i class="ph ph-lock-key"></i>
+                        <input type="password" name="senha" class="input" placeholder="Crie uma senha forte" required>
                     </div>
                 </div>
-                <button type="submit" class="btn-login" style="background-color: #10b981;">Criar Conta</button>
+                
+                <button type="submit" class="btn btn-primary btn-full" style="background-color: var(--success); box-shadow: none;">Criar Conta</button>
             </form>
         </div>
     </div>
 
     <script>
-        // Funcionalidade de Troca de Abas
         function switchTab(type) {
             const loginForm = document.getElementById('loginForm');
             const registerForm = document.getElementById('registerForm');
@@ -163,19 +311,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
-        // Funcionalidade de Alternância de Tema
+        // Theme Toggle Logic
         const btn = document.getElementById('theme-toggle');
+        const icon = document.getElementById('theme-icon');
         const html = document.documentElement;
 
         const aplicarTema = (tema) => {
             html.setAttribute('data-theme', tema);
             localStorage.setItem('theme', tema);
-            if (btn) {
-                btn.innerHTML = tema === 'light' ? '☀️ Modo Claro' : '🌙 Modo Escuro';
+            if (icon) {
+                icon.className = tema === 'light' ? 'ph ph-sun' : 'ph ph-moon';
             }
         };
 
-        // Inicia com o tema salvo ou padrão escuro
         const temaInicial = localStorage.getItem('theme') || 'dark';
         aplicarTema(temaInicial);
 

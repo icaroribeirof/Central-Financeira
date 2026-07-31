@@ -76,8 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h4>${c.nome}</h4>
                     </div>
                     <div class="acoes">
-                        <button class="btn-edit" onclick="prepararEdicao(${c.id}, '${c.nome}')">✏️</button>
-                        <button class="btn-delete" onclick="removerCategoria(${c.id})">🗑️</button>
+                        <button class="btn-icon btn-action-edit" onclick="prepararEdicao(${c.id}, '${c.nome.replace(/'/g, "\\'")}')"><i class="ph ph-pencil-simple"></i></button>
+                        <button class="btn-icon btn-action-delete" onclick="removerCategoria(${c.id})"><i class="ph ph-trash"></i></button>
                     </div>
                 </div>`).join('');
 

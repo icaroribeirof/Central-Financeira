@@ -414,15 +414,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 valorSpan.textContent = `${t.tipo === 'despesa' ? '-' : '+'} R$ ${parseFloat(t.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
 
                 const btnEdit = document.createElement('button');
-                btnEdit.className = 'btn-edit';
-                btnEdit.textContent = '✏️';
-                btnEdit.title = 'Editar';
+                btnEdit.className = 'btn-icon btn-action-edit';
+                btnEdit.innerHTML = '<i class="ph ph-pencil-simple"></i>';
                 btnEdit.addEventListener('click', () => prepararEdicao(t));
 
                 const btnDel = document.createElement('button');
-                btnDel.className = 'btn-delete';
-                btnDel.textContent = '🗑️';
-                btnDel.title = 'Excluir';
+                btnDel.className = 'btn-icon btn-action-delete';
+                btnDel.innerHTML = '<i class="ph ph-trash"></i>';
                 btnDel.addEventListener('click', () => confirmarExclusao(t));
 
                 acoes.appendChild(valorSpan);

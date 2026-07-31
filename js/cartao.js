@@ -102,8 +102,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         </div>
                         <div class="card-footer">
-                            <button class="btn-edit" onclick="prepararEdicao(${c.id}, '${c.nome.replace(/'/g, "\\'")}', ${c.limite}, ${c.dia_fechamento})">Editar</button>
-                            <button class="btn-delete" onclick="removerCartao(${c.id})">Excluir</button>
+                            <button class="btn btn-secondary btn-action-edit" onclick="prepararEdicao(${c.id}, '${c.nome.replace(/'/g, "\\'")}', ${c.limite}, ${c.dia_fechamento})"><i class="ph ph-pencil-simple"></i> Editar</button>
+                            <button class="btn btn-ghost btn-action-delete" onclick="removerCartao(${c.id})"><i class="ph ph-trash"></i> Excluir</button>
                         </div>
                     </div>`;
             }).join('');
