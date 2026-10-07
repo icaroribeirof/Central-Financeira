@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="acoes">
                         <button class="btn-icon btn-action-edit" onclick="prepararEdicao(${c.id}, '${c.nome.replace(/'/g, "\\'")}')"><i class="ph ph-pencil-simple"></i></button>
-                        <button class="btn-icon btn-action-delete" onclick="removerCategoria(${c.id})"><i class="ph ph-trash"></i></button>
+                        <button class="btn-icon btn-action-delete" onclick="removerCategoria(${c.id}, '${c.nome.replace(/'/g, "\\'")}')"><i class="ph ph-trash"></i></button>
                     </div>
                 </div>`).join('');
 
@@ -96,8 +96,19 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- REMOVER ---
-    window.removerCategoria = async (id) => {
-        if (confirm("Excluir esta categoria?")) {
+    window.removerCategoria = async (id, nome = '') => {
+        const mensagem = nome 
+            ? `Tem certeza que deseja excluir a categoria "${nome}"? Esta ação não pode ser desfeita.`
+            : 'Tem certeza que deseja excluir esta categoria? Esta ação não pode ser desfeita.';
+
+        const confirmado = await ConfirmDeleteModal.open({
+            title: 'Excluir Categoria',
+            message: mensagem,
+            confirmText: 'Excluir Categoria',
+            cancelText: 'Cancelar'
+        });
+
+        if (confirmado) {
             try {
                 const response = await fetch('api/api_categorias.php', {
                     method: 'DELETE',

@@ -320,4 +320,159 @@
     color: var(--text-primary);
 }
 
+/* Solid Danger Button for Modals/Actions */
+.btn-danger-solid {
+    background-color: var(--danger);
+    color: #ffffff;
+    border: 1px solid var(--danger);
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.25);
+    font-weight: 600;
+}
+
+.btn-danger-solid:hover:not(:disabled) {
+    background-color: #dc2626;
+    border-color: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(239, 68, 68, 0.35);
+    color: #ffffff;
+}
+
+/* =========================================
+   CONFIRM DELETE MODAL COMPONENT STYLES
+========================================= */
+.confirm-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-4);
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+}
+
+.confirm-modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.confirm-modal-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-6);
+    width: 100%;
+    max-width: 420px;
+    box-shadow: var(--shadow-lg), 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    position: relative;
+    transform: scale(0.95) translateY(10px);
+    animation: modalPopIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalPopIn {
+    from {
+        opacity: 0;
+        transform: scale(0.92) translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes modalPopOut {
+    from {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+    }
+}
+
+.confirm-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.confirm-modal-close:hover {
+    color: var(--text-primary);
+    background-color: var(--bg-card-hover);
+}
+
+.confirm-modal-icon-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: var(--spacing-4);
+}
+
+.confirm-modal-icon-bg {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: var(--danger-bg);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--danger-text);
+    font-size: 1.75rem;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.15);
+}
+
+.confirm-modal-body {
+    text-align: center;
+    margin-bottom: var(--spacing-6);
+}
+
+.confirm-modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-2);
+    letter-spacing: -0.01em;
+}
+
+.confirm-modal-message {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.confirm-modal-footer {
+    display: flex;
+    gap: var(--spacing-3);
+    width: 100%;
+}
+
+.confirm-modal-footer .btn {
+    flex: 1;
+    padding: 0.625rem 1rem;
+    justify-content: center;
+    font-size: 0.875rem;
+}
+
+
 

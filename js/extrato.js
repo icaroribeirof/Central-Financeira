@@ -77,6 +77,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Popular selects ──────────────────────────────────────────────────────
     async function popularSelects() {
+        const catFiltroAtual = filtroCategoria ? filtroCategoria.value : '';
+        const metFiltroAtual = filtroMetodo ? filtroMetodo.value : '';
+
         try {
             const resCat = await fetch('api/api_categorias.php');
             const categorias = await resCat.json();
@@ -145,6 +148,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 optFiltro.textContent = c.nome;
                 filtroMetodo.appendChild(optFiltro);
             });
+
+            // Restaura os valores anteriormente selecionados nos filtros
+            if (catFiltroAtual) filtroCategoria.value = catFiltroAtual;
+            if (metFiltroAtual) filtroMetodo.value = metFiltroAtual;
         } catch (e) { console.error('Erro ao popular selects', e); }
     }
 
@@ -481,10 +488,17 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ── Excluir lançamento (com escopo para grupos) ──────────────────────────
-    const confirmarExclusao = (t) => {
+    const confirmarExclusao = async (t) => {
         if (t.tipo_lancamento === 'unico' || !t.grupo_id) {
             // Lançamento simples: exclui direto
-            if (confirm('Excluir esta transação?')) executarExclusao(t.id, 'unico');
+            const desc = t.descricao ? `"${t.descricao}"` : 'esta transação';
+            const confirmado = await ConfirmDeleteModal.open({
+                title: 'Excluir Transação',
+                message: `Tem certeza que deseja excluir a transação ${desc}? Esta ação não pode ser desfeita.`,
+                confirmText: 'Excluir Transação',
+                cancelText: 'Cancelar'
+            });
+            if (confirmado) executarExclusao(t.id, 'unico');
             return;
         }
 
@@ -521,7 +535,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── Limpar mês ───────────────────────────────────────────────────────────
     window.executarLimpeza = async (tipo) => {
         const mes = filtroMesInput.value;
-        if (confirm(`Deseja limpar os registros (${tipo}) deste mês?`)) {
+        const tipoLabel = tipo === 'tudo' ? 'todas as movimentações' : tipo === 'despesa' ? 'somente despesas' : 'somente receitas';
+        const confirmado = await ConfirmDeleteModal.open({
+            title: 'Limpar Registros do Mês',
+            message: `Tem certeza que deseja limpar os registros (${tipoLabel}) deste mês? Esta ação não pode ser desfeita.`,
+            confirmText: 'Confirmar Limpeza',
+            cancelText: 'Cancelar'
+        });
+
+        if (confirmado) {
             await fetch('api/api_extrato.php', {
                 method:  'PATCH',
                 headers: { 'Content-Type': 'application/json' },

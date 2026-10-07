@@ -203,3 +203,4 @@
         };
     }
 </script>
+<script src="js/confirm-modal.js"></script>

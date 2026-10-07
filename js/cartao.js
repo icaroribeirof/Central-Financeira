@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="card-footer">
                             <button class="btn btn-secondary btn-action-edit" onclick="prepararEdicao(${c.id}, '${c.nome.replace(/'/g, "\\'")}', ${c.limite}, ${c.dia_fechamento})"><i class="ph ph-pencil-simple"></i> Editar</button>
-                            <button class="btn btn-ghost btn-action-delete" onclick="removerCartao(${c.id})"><i class="ph ph-trash"></i> Excluir</button>
+                            <button class="btn btn-ghost btn-action-delete" onclick="removerCartao(${c.id}, '${c.nome.replace(/'/g, "\\'")}')"><i class="ph ph-trash"></i> Excluir</button>
                         </div>
                     </div>`;
             }).join('');
@@ -121,8 +121,20 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.style.display = 'flex';
     };
 
-    window.removerCartao = async (id) => {
-        if (confirm("Deseja excluir este cartão?")) {
+    window.removerCartao = async (id, nome = '') => {
+        const mensagem = nome 
+            ? `Tem certeza que deseja excluir o cartão "${nome}"? Esta ação não pode ser desfeita.`
+            : 'Tem certeza que deseja excluir este cartão? Esta ação não pode ser desfeita.';
+
+        const confirmado = await ConfirmDeleteModal.open({
+            title: 'Excluir Cartão',
+            message: mensagem,
+            confirmText: 'Excluir Cartão',
+            cancelText: 'Cancelar',
+            iconClass: 'ph ph-credit-card'
+        });
+
+        if (confirmado) {
             const res = await fetch('api/api_cartao.php?acao=excluir', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -130,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const result = await res.json();
             if (result.sucesso) renderizar();
+            else if (result.erro) alert('Erro ao excluir: ' + result.erro);
         }
     };
 

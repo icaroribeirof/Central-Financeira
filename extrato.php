@@ -498,14 +498,18 @@ $usuario_nome = $_SESSION['usuario_nome'];
 
     <!-- Outros Modais Auxiliares -->
     <div id="modal-limpeza" class="modal">
-        <div class="modal-content" style="max-width: 400px; text-align: center;">
-            <div style="font-size: 3rem; color: var(--danger); margin-bottom: var(--spacing-2);"><i class="ph ph-warning"></i></div>
+        <div class="modal-content" style="max-width: 420px; text-align: center;">
+            <div class="confirm-modal-icon-container">
+                <div class="confirm-modal-icon-bg">
+                    <i class="ph ph-warning-circle"></i>
+                </div>
+            </div>
             <h3>Limpar Registros</h3>
             <p style="color: var(--text-secondary); margin-bottom: var(--spacing-6);">
                 Selecione o que deseja excluir do mês selecionado:
             </p>
             <div style="display: flex; flex-direction: column; gap: var(--spacing-2);">
-                <button onclick="executarLimpeza('tudo')" class="btn btn-danger" style="justify-content: center; width: 100%;">Todas as Movimentações</button>
+                <button onclick="executarLimpeza('tudo')" class="btn btn-danger-solid" style="justify-content: center; width: 100%;">Todas as Movimentações</button>
                 <button onclick="executarLimpeza('despesa')" class="btn btn-secondary" style="justify-content: center; width: 100%;">Somente Despesas</button>
                 <button onclick="executarLimpeza('receita')" class="btn btn-secondary" style="justify-content: center; width: 100%;">Somente Receitas</button>
                 <button onclick="fecharModal()" class="btn btn-ghost" style="justify-content: center; width: 100%; margin-top: var(--spacing-2);">Cancelar</button>
@@ -514,7 +518,7 @@ $usuario_nome = $_SESSION['usuario_nome'];
     </div>
 
     <div id="modal-editar-grupo" class="modal">
-        <div class="modal-content" style="max-width: 400px; text-align: center;">
+        <div class="modal-content" style="max-width: 420px; text-align: center;">
             <h3 id="editar-grupo-titulo">Salvar Alteração</h3>
             <p style="color: var(--text-secondary); margin-bottom: var(--spacing-6);" id="editar-grupo-subtitulo"></p>
             <div style="display: flex; flex-direction: column; gap: var(--spacing-2);">
@@ -526,13 +530,18 @@ $usuario_nome = $_SESSION['usuario_nome'];
     </div>
 
     <div id="modal-excluir-grupo" class="modal">
-        <div class="modal-content" style="max-width: 400px; text-align: center;">
+        <div class="modal-content" style="max-width: 420px; text-align: center;">
+            <div class="confirm-modal-icon-container">
+                <div class="confirm-modal-icon-bg">
+                    <i class="ph ph-trash"></i>
+                </div>
+            </div>
             <h3 id="excluir-titulo">Excluir Lançamento</h3>
             <p style="color: var(--text-secondary); margin-bottom: var(--spacing-6);" id="excluir-subtitulo"></p>
             <div style="display: flex; flex-direction: column; gap: var(--spacing-2);">
                 <button id="btn-excluir-unico" class="btn btn-secondary" style="justify-content: center;">Só este</button>
                 <button id="btn-excluir-futuros" class="btn btn-primary" style="justify-content: center;">Este e futuros</button>
-                <button id="btn-excluir-grupo" class="btn btn-danger" style="justify-content: center;">Todos do grupo</button>
+                <button id="btn-excluir-grupo" class="btn btn-danger-solid" style="justify-content: center;">Todos do grupo</button>
                 <button onclick="fecharModal()" class="btn btn-ghost" style="justify-content: center;">Cancelar</button>
             </div>
         </div>
