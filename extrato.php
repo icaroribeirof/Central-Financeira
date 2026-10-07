@@ -30,6 +30,10 @@ $usuario_nome = $_SESSION['usuario_nome'];
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="js/animations.js"></script>
     
+    <!-- Bibliotecas para Exportação de Excel no Cliente -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    
     <style>
         .page-layout {
             max-width: 1200px;
@@ -337,6 +341,9 @@ $usuario_nome = $_SESSION['usuario_nome'];
             <div class="header-btns">
                 <button class="btn btn-secondary" id="btn-resetar-filtros">
                     <i class="ph ph-arrows-clockwise"></i> Resetar Filtros
+                </button>
+                <button class="btn btn-success" id="btn-exportar-excel">
+                    <i class="ph ph-file-xls"></i> Exportar (.xlsx)
                 </button>
                 <button class="btn btn-danger" id="btn-abrir-limpeza">
                     <i class="ph ph-trash"></i> Limpar Mês

@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnAbrirCadastro = document.getElementById('btn-abrir-cadastro');
     const btnAbrirLimpeza  = document.getElementById('btn-abrir-limpeza');
     const btnResetarFiltros = document.getElementById('btn-resetar-filtros');
+    const btnExportarExcel = document.getElementById('btn-exportar-excel');
 
     // Novos elementos de tipo de lançamento
     const campoParcelas   = document.getElementById('campo-parcelas');
@@ -39,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let idEdicao           = null;
     let tipoLancamentoEdicao = 'unico'; // guarda o tipo do item sendo editado
+    let transacoesFiltradasGlobais = []; // guarda o estado atual das transações após filtros
 
     // ── Lógica dos radio cards (único / recorrente / parcelado) ──────────────
     document.querySelectorAll('input[name="tipo_lancamento"]').forEach(radio => {
@@ -341,6 +343,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return 0;
             });
 
+            // Salva as transações filtradas no escopo global para o Excel
+            transacoesFiltradasGlobais = transacoes;
+
             // ✅ NOVO: Calcular receitas SEM filtros (sempre do mês todo)
             const res_data  = await fetch(`api/api_extrato.php?mes=${mes}`);
             const data_receitas = await res_data.json();
@@ -553,6 +558,122 @@ document.addEventListener('DOMContentLoaded', () => {
             carregarHistorico();
         }
     };
+
+    // ── Exportar para Excel ──────────────────────────────────────────────────
+    if (btnExportarExcel) {
+        btnExportarExcel.onclick = async () => {
+            if (transacoesFiltradasGlobais.length === 0) {
+                alert('Nenhuma transação para exportar com os filtros atuais.');
+                return;
+            }
+
+            // UI Feedback
+            const originalHtml = btnExportarExcel.innerHTML;
+            btnExportarExcel.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Gerando...';
+            btnExportarExcel.disabled = true;
+
+            try {
+                // Configura o workbook e worksheet do exceljs
+                const workbook = new ExcelJS.Workbook();
+                const worksheet = workbook.addWorksheet('Extrato');
+
+                // Cabeçalhos (estrutura fiel ao comum de extratos)
+                worksheet.columns = [
+                    { header: 'Data', key: 'data', width: 15 },
+                    { header: 'Descrição', key: 'descricao', width: 40 },
+                    { header: 'Categoria', key: 'categoria', width: 20 },
+                    { header: 'Pagamento', key: 'metodo', width: 15 },
+                    { header: 'Tipo', key: 'tipo', width: 15 },
+                    { header: 'Valor', key: 'valor', width: 15 }
+                ];
+
+                // Estiliza o cabeçalho
+                worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+                worksheet.getRow(1).fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'FF3B82F6' } // Azul do sistema
+                };
+                worksheet.getRow(1).alignment = { horizontal: 'center' };
+
+                // Aplica bordas no cabeçalho
+                worksheet.getRow(1).eachCell((cell) => {
+                    cell.border = {
+                        top: { style: 'thin' }, left: { style: 'thin' },
+                        bottom: { style: 'thin' }, right: { style: 'thin' }
+                    };
+                });
+
+                let totalReceitas = 0;
+                let totalDespesas = 0;
+
+                // Preenche as linhas
+                transacoesFiltradasGlobais.forEach(t => {
+                    const parts = t.data.split('-');
+                    const dateObj = new Date(parts[0], parts[1] - 1, parts[2]);
+                    
+                    const valorNum = parseFloat(t.valor);
+                    if (t.tipo === 'receita') totalReceitas += valorNum;
+                    else totalDespesas += valorNum;
+
+                    const row = worksheet.addRow({
+                        data: dateObj,
+                        descricao: t.descricao,
+                        categoria: t.categoria,
+                        metodo: t.metodo,
+                        tipo: t.tipo.charAt(0).toUpperCase() + t.tipo.slice(1),
+                        valor: t.tipo === 'despesa' ? -valorNum : valorNum
+                    });
+
+                    // Formata a data (DD/MM/YYYY)
+                    row.getCell('data').numFmt = 'dd/mm/yyyy';
+                    
+                    // Formata o valor monetário: número/moeda, negativo vermelho
+                    row.getCell('valor').numFmt = '"R$" #,##0.00;[Red]\-"R$" #,##0.00';
+                    
+                    // Bordas sutis nas linhas de dados
+                    row.eachCell((cell) => {
+                        cell.border = {
+                            top: { style: 'thin', color: {argb: 'FFDDDDDD'} },
+                            left: { style: 'thin', color: {argb: 'FFDDDDDD'} },
+                            bottom: { style: 'thin', color: {argb: 'FFDDDDDD'} },
+                            right: { style: 'thin', color: {argb: 'FFDDDDDD'} }
+                        };
+                    });
+                });
+
+                // Adiciona linha vazia
+                worksheet.addRow([]);
+
+                // Linha de totalizadores / Resumo no rodapé
+                const resumoRow = worksheet.addRow({
+                    descricao: 'SALDO DO PERÍODO:',
+                    valor: totalReceitas - totalDespesas
+                });
+                
+                resumoRow.font = { bold: true };
+                resumoRow.getCell('valor').numFmt = '"R$" #,##0.00;[Red]\-"R$" #,##0.00';
+                
+                // Gera o arquivo
+                const buffer = await workbook.xlsx.writeBuffer();
+                const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                
+                // Nomenclatura: extrato_YYYY-MM.xlsx ou extrato_YYY-MM-DD se fosse intervalo
+                const mesFiltro = filtroMesInput.value || new Date().toISOString().slice(0, 7);
+                const nomeArquivo = `extrato_${mesFiltro}.xlsx`;
+                
+                saveAs(blob, nomeArquivo);
+
+            } catch (error) {
+                console.error("Erro ao exportar Excel:", error);
+                alert("Houve um erro ao gerar o arquivo Excel.");
+            } finally {
+                // Restaura botão
+                btnExportarExcel.innerHTML = originalHtml;
+                btnExportarExcel.disabled = false;
+            }
+        };
+    }
 
     // ── Eventos ──────────────────────────────────────────────────────────────
     filtroMesInput.onchange = carregarHistorico;
